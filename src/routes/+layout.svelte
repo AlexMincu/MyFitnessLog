@@ -23,10 +23,19 @@
 	import Navigation from '../components/navigation.svelte';
 
 	const accountPopup: PopupSettings = {
-		event: 'focus-click',
+		event: 'click',
 		target: 'accountPopup',
 		placement: 'bottom',
-		closeQuery: '.account-list-item'
+		closeQuery: '.account-list-item',
+		middleware: {
+			shift: {
+				// https://floating-ui.com/docs/detectoverflow#padding
+				// detect overflow - fixes placement on mobile
+				padding: {
+					right: 20 // 0 by default
+				}
+			}
+		}
 	};
 
 	const drawerSettings: DrawerSettings = {
