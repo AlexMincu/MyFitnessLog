@@ -12,7 +12,8 @@
 		popup,
 		Drawer,
 		drawerStore,
-		storePopup
+		storePopup,
+		LightSwitch
 	} from '@skeletonlabs/skeleton';
 	import type { PopupSettings, DrawerSettings } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
@@ -76,7 +77,7 @@
 					</svg>
 				</button>
 				<a
-					class="text-2xl font-semibold tracking-tighter text-primary-50 hover:text-primary-200"
+					class="text-2xl font-semibold tracking-tighter text-variant-primary-50 hover:text-variant-primary-200"
 					href="/">MyFitnessLog</a
 				>
 			</svelte:fragment>
@@ -99,6 +100,9 @@
 
 				<div class="card w-32 shadow-xl py-2" data-popup="accountPopup">
 					<ul class="list-nav">
+						<li class="flex justify-center items-center my-3">
+							<LightSwitch rounded="rounded-lg" />
+						</li>
 						<li class="account-list-item">
 							<a class="btn btn-sm" href="/"> Account </a>
 						</li>
