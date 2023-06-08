@@ -8,7 +8,7 @@
 <div class="container mx-auto mb-20 flex h-full flex-col items-center justify-start">
 	<h2 class="h2 my-10">Register</h2>
 
-	<form action="?/register" method="POST" class="flex w-96 flex-col gap-3" use:enhance>
+	<form action="?/register" method="POST" class="flex w-[80%] flex-col gap-3 sm:w-96" use:enhance>
 		<label class="label">
 			<span>First Name</span>
 			<input

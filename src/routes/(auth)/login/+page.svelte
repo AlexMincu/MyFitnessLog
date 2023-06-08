@@ -8,7 +8,7 @@
 <div class="container mx-auto mb-20 flex h-full flex-col items-center justify-start">
 	<h2 class="h2 my-10">Login</h2>
 
-	<form action="?/login" method="POST" class="flex w-96 flex-col gap-3" use:enhance>
+	<form action="?/login" method="POST" class="flex w-[80%] flex-col gap-3 sm:w-96" use:enhance>
 		<label class="label">
 			<span>Email</span>
 			<input

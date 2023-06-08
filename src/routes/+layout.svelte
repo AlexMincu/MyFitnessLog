@@ -29,11 +29,12 @@
 		placement: 'bottom',
 		closeQuery: '.account-list-item',
 		middleware: {
+			offset: 2,
 			shift: {
 				// https://floating-ui.com/docs/detectoverflow#padding
 				// detect overflow - fixes placement on mobile
 				padding: {
-					right: 20 // 0 by default
+					right: 18 // 0 by default
 				}
 			}
 		}
@@ -44,8 +45,12 @@
 		width: 'w-[65%]'
 	};
 
-	function openDrawer() {
+	export function openDrawer() {
 		drawerStore.open(drawerSettings);
+	}
+
+	export function closeDrawer() {
+		drawerStore.close();
 	}
 </script>
 
@@ -69,28 +74,32 @@
 		>
 			<!-- Lead fragment -->
 			<svelte:fragment slot="lead">
-				<button class="btn-icon md:hidden" on:click={openDrawer}>
-					<svg
-						class="w-10"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.5"
-						viewBox="0 0 24 24"
-						xmlns="http://www.w3.org/2000/svg"
-						aria-hidden="true"
-					>
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5"
-						/>
-					</svg>
-				</button>
+				{#if $page.data.user}
+					<button class="btn-icon md:hidden" on:click={openDrawer}>
+						<svg
+							class="w-10"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="1.5"
+							viewBox="0 0 24 24"
+							xmlns="http://www.w3.org/2000/svg"
+							aria-hidden="true"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M3.75 5.25h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5m-16.5 4.5h16.5"
+							/>
+						</svg>
+					</button>
+				{/if}
 
-				<a
-					class="text-variant-primary-50 hover:text-variant-primary-200 text-2xl font-semibold tracking-tighter"
-					href="/">MyFitnessLog</a
-				>
+				<div class="flex h-14 items-center justify-center md:h-20">
+					<a
+						class="text-variant-primary-50 hover:text-variant-primary-200 text-2xl font-semibold tracking-tighter"
+						href="/">MyFitnessLog</a
+					>
+				</div>
 			</svelte:fragment>
 
 			<!-- Default fragment -->
@@ -101,9 +110,8 @@
 			<!-- Trail fragment -->
 			<svelte:fragment slot="trail">
 				{#if $page.data.user}
-					<button class="btn-icon m-3 w-14" use:popup={accountPopup}>
+					<button class="btn-icon mx-3 my-auto w-12 md:w-14" use:popup={accountPopup}>
 						<Avatar
-							class="w-14"
 							cursor="cursor-pointer"
 							initials={$page.data.user.firstName[0] + $page.data.user.lastName[0]}
 							background="variant-glass-primary"
