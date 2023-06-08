@@ -105,7 +105,7 @@
 						<Avatar
 							class="w-14"
 							cursor="cursor-pointer"
-							initials="AM"
+							initials={$page.data.user.firstName[0] + $page.data.user.lastName[0]}
 							background="variant-glass-primary"
 						/>
 					</button>
