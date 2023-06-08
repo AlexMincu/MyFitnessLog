@@ -1,5 +1,8 @@
 <script lang="ts">
+	import type { ActionData } from './$types';
 	import { enhance } from '$app/forms';
+
+	export let form: ActionData;
 </script>
 
 <div class="container mx-auto mb-20 flex h-full flex-col items-center justify-start">
@@ -28,6 +31,10 @@
 				placeholder="Password"
 			/>
 		</label>
+
+		{#if form?.credentials}
+			<p class="text-error-400">You have entered the wrong credentials.</p>
+		{/if}
 
 		<button type="submit" class="btn variant-filled-primary my-6 rounded-full">Sign in</button>
 

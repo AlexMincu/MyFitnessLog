@@ -1,5 +1,8 @@
 <script lang="ts">
+	import type { ActionData } from './$types';
 	import { enhance } from '$app/forms';
+
+	export let form: ActionData;
 </script>
 
 <div class="container mx-auto mb-20 flex h-full flex-col items-center justify-start">
@@ -39,6 +42,10 @@
 				autocomplete="email"
 			/>
 		</label>
+
+		{#if form?.invalid}
+			<p class="text-error-400">Username is taken.</p>
+		{/if}
 
 		<label class="label">
 			<span>Password</span>

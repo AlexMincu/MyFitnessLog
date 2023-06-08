@@ -21,6 +21,7 @@
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
 	import Navigation from '../components/navigation.svelte';
+	import { page } from '$app/stores';
 
 	const accountPopup: PopupSettings = {
 		event: 'click',
@@ -50,7 +51,7 @@
 
 <!-- Mobile Drawer -->
 <Drawer>
-	<h3 class="h3 text-center w-auto mt-8 mb-4">Menu</h3>
+	<h3 class="h3 mb-4 mt-8 w-auto text-center">Menu</h3>
 	<hr class="!border-t-2" />
 	<Navigation />
 </Drawer>
@@ -86,7 +87,7 @@
 					</svg>
 				</button>
 				<a
-					class="text-2xl font-semibold tracking-tighter text-variant-primary-50 hover:text-variant-primary-200"
+					class="text-variant-primary-50 hover:text-variant-primary-200 text-2xl font-semibold tracking-tighter"
 					href="/">MyFitnessLog</a
 				>
 			</svelte:fragment>
@@ -98,7 +99,7 @@
 
 			<!-- Trail fragment -->
 			<svelte:fragment slot="trail">
-				<button class="btn-icon w-14 m-3" use:popup={accountPopup}>
+				<button class="btn-icon m-3 w-14" use:popup={accountPopup}>
 					<Avatar
 						class="w-14"
 						cursor="cursor-pointer"
@@ -107,20 +108,26 @@
 					/>
 				</button>
 
-				<div class="card w-32 shadow-xl py-2" data-popup="accountPopup">
+				<div class="card w-32 py-2 shadow-xl" data-popup="accountPopup">
 					<ul class="list-nav">
-						<li class="flex justify-center items-center my-3">
+						<li class="my-3 flex items-center justify-center">
 							<LightSwitch rounded="rounded-lg" />
 						</li>
-						<li class="account-list-item">
-							<a class="btn btn-sm" href="/"> Account </a>
-						</li>
-						<li class="account-list-item">
-							<a class="btn btn-sm" href="/"> Settings </a>
-						</li>
-						<li class="account-list-item">
-							<a class="btn btn-sm" href="/"> Logout </a>
-						</li>
+
+						{#if $page.data.user}
+							<li class="account-list-item">
+								<a class="btn btn-sm" href="/"> Account </a>
+							</li>
+							<li class="account-list-item">
+								<a class="btn btn-sm" href="/"> Settings </a>
+							</li>
+
+							<li class="account-list-item">
+								<form action="/logout" method="POST">
+									<button type="submit" class="btn btn-sm"> Log out </button>
+								</form>
+							</li>
+						{/if}
 					</ul>
 				</div>
 			</svelte:fragment>
