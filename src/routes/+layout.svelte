@@ -86,6 +86,7 @@
 						/>
 					</svg>
 				</button>
+
 				<a
 					class="text-variant-primary-50 hover:text-variant-primary-200 text-2xl font-semibold tracking-tighter"
 					href="/">MyFitnessLog</a
@@ -99,22 +100,22 @@
 
 			<!-- Trail fragment -->
 			<svelte:fragment slot="trail">
-				<button class="btn-icon m-3 w-14" use:popup={accountPopup}>
-					<Avatar
-						class="w-14"
-						cursor="cursor-pointer"
-						initials="AM"
-						background="variant-glass-primary"
-					/>
-				</button>
+				{#if $page.data.user}
+					<button class="btn-icon m-3 w-14" use:popup={accountPopup}>
+						<Avatar
+							class="w-14"
+							cursor="cursor-pointer"
+							initials="AM"
+							background="variant-glass-primary"
+						/>
+					</button>
 
-				<div class="card w-32 py-2 shadow-xl" data-popup="accountPopup">
-					<ul class="list-nav">
-						<li class="my-3 flex items-center justify-center">
-							<LightSwitch rounded="rounded-lg" />
-						</li>
+					<div class="card w-32 py-2 shadow-xl" data-popup="accountPopup">
+						<ul class="list-nav">
+							<li class="my-3 flex items-center justify-center">
+								<LightSwitch rounded="rounded-lg" />
+							</li>
 
-						{#if $page.data.user}
 							<li class="account-list-item">
 								<a class="btn btn-sm" href="/"> Account </a>
 							</li>
@@ -124,12 +125,17 @@
 
 							<li class="account-list-item">
 								<form action="/logout" method="POST">
-									<button type="submit" class="btn btn-sm"> Log out </button>
+									<button type="submit" class="btn btn-sm w-full"> Log out </button>
 								</form>
 							</li>
-						{/if}
-					</ul>
-				</div>
+						</ul>
+					</div>
+				{:else}
+					<div class="flex h-14 items-center justify-center gap-6">
+						<LightSwitch rounded="rounded-lg" />
+						<a href="/login" class="variant-ghost-primary btn h-10 rounded-lg">Sign in</a>
+					</div>
+				{/if}
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>

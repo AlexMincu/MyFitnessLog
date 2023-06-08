@@ -16,7 +16,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	if (user) {
 		event.locals.user = {
-			name: user.email,
+			email: user.email,
 			role: user.role
 		};
 	}
