@@ -29,14 +29,7 @@
 		placement: 'bottom',
 		closeQuery: '.account-list-item',
 		middleware: {
-			offset: 2,
-			shift: {
-				// https://floating-ui.com/docs/detectoverflow#padding
-				// detect overflow - fixes placement on mobile
-				padding: {
-					right: 18 // 0 by default
-				}
-			}
+			offset: 5
 		}
 	};
 
@@ -94,7 +87,7 @@
 					</button>
 				{/if}
 
-				<div class="flex h-14 items-center justify-center md:h-20">
+				<div class="flex h-16 items-center justify-center md:h-20">
 					<a
 						class="text-variant-primary-50 hover:text-variant-primary-200 text-2xl font-semibold tracking-tighter"
 						href="/">MyFitnessLog</a
@@ -110,33 +103,35 @@
 			<!-- Trail fragment -->
 			<svelte:fragment slot="trail">
 				{#if $page.data.user}
-					<button class="btn-icon mx-3 my-auto w-12 md:w-14" use:popup={accountPopup}>
-						<Avatar
-							cursor="cursor-pointer"
-							initials={$page.data.user.firstName[0] + $page.data.user.lastName[0]}
-							background="variant-glass-primary"
-						/>
-					</button>
+					<div class="mr-4 flex w-full">
+						<button class="btn-icon my-auto w-14" use:popup={accountPopup}>
+							<Avatar
+								cursor="cursor-pointer"
+								initials={$page.data.user.firstName[0] + $page.data.user.lastName[0]}
+								background="variant-glass-primary"
+							/>
+						</button>
 
-					<div class="card w-32 py-2 shadow-xl" data-popup="accountPopup">
-						<ul class="list-nav">
-							<li class="my-3 flex items-center justify-center">
-								<LightSwitch rounded="rounded-lg" />
-							</li>
+						<div class="card w-32 py-2 shadow-xl" data-popup="accountPopup">
+							<ul class="list-nav">
+								<li class="my-3 flex items-center justify-center">
+									<LightSwitch rounded="rounded-lg" />
+								</li>
 
-							<li class="account-list-item">
-								<a class="btn btn-sm" href="/"> Account </a>
-							</li>
-							<li class="account-list-item">
-								<a class="btn btn-sm" href="/"> Settings </a>
-							</li>
+								<li class="account-list-item">
+									<a class="btn btn-sm" href="/"> Account </a>
+								</li>
+								<li class="account-list-item">
+									<a class="btn btn-sm" href="/"> Settings </a>
+								</li>
 
-							<li class="account-list-item">
-								<form action="/logout" method="POST">
-									<button type="submit" class="btn btn-sm w-full"> Log out </button>
-								</form>
-							</li>
-						</ul>
+								<li class="account-list-item">
+									<form action="/logout" method="POST">
+										<button type="submit" class="btn btn-sm w-full"> Log out </button>
+									</form>
+								</li>
+							</ul>
+						</div>
 					</div>
 				{:else}
 					<div class="flex h-14 items-center justify-center gap-6">
