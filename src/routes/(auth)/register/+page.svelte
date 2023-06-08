@@ -8,16 +8,18 @@
 <div class="container mx-auto mb-20 flex h-full flex-col items-center justify-start">
 	<h2 class="h2 my-10">Register</h2>
 
-	<form action="?/register" method="POST" class="flex flex-col gap-3" use:enhance>
+	<form action="?/register" method="POST" class="flex w-96 flex-col gap-3" use:enhance>
 		<label class="label">
 			<span>First Name</span>
 			<input
 				class="input rounded-lg shadow-sm focus:border-b-2 focus:border-primary-600-300-token"
 				name="firstName"
-				title="first-name"
 				type="text"
-				placeholder="First Name"
+				value={form?.data?.firstName ?? ''}
 			/>
+			{#if form?.errors?.firstName}
+				<span class="text-red-500"> {form?.errors?.firstName[0]} </span>
+			{/if}
 		</label>
 
 		<label class="label">
@@ -25,10 +27,12 @@
 			<input
 				class="input rounded-lg shadow-sm focus:border-b-2 focus:border-primary-600-300-token"
 				name="lastName"
-				title="last-name"
 				type="text"
-				placeholder="Last Name"
+				value={form?.data?.lastName ?? ''}
 			/>
+			{#if form?.errors?.lastName}
+				<span class="text-red-500"> {form?.errors?.lastName[0]} </span>
+			{/if}
 		</label>
 
 		<label class="label">
@@ -36,37 +40,37 @@
 			<input
 				class="input rounded-lg shadow-sm focus:border-b-2 focus:border-primary-600-300-token"
 				name="email"
-				title="email"
 				type="email"
-				placeholder="Email"
 				autocomplete="email"
+				value={form?.data?.email ?? ''}
 			/>
+			{#if form?.errors?.email}
+				<span class="text-red-500"> {form?.errors?.email[0]} </span>
+			{/if}
 		</label>
-
-		{#if form?.invalid}
-			<p class="text-error-400">Username is taken.</p>
-		{/if}
 
 		<label class="label">
 			<span>Password</span>
 			<input
 				name="password"
 				class="input rounded-lg shadow-sm focus:border-b-2 focus:border-primary-600-300-token"
-				title="password"
 				type="password"
-				placeholder="Password"
 			/>
+			{#if form?.errors?.password}
+				<span class="text-red-500"> {form?.errors?.password[0]} </span>
+			{/if}
 		</label>
 
 		<label class="label">
 			<span>Confirm Password</span>
 			<input
-				name="confirmPassword"
+				name="passwordConfirm"
 				class="input rounded-lg shadow-sm focus:border-b-2 focus:border-primary-600-300-token"
-				title="confirm-password"
 				type="password"
-				placeholder="Confirm Password"
 			/>
+			{#if form?.errors?.passwordConfirm}
+				<span class="text-red-500"> {form?.errors?.passwordConfirm[0]} </span>
+			{/if}
 		</label>
 
 		<button type="submit" class="btn variant-filled-primary my-6 rounded-full">Sign up</button>

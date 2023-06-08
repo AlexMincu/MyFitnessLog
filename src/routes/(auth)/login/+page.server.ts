@@ -4,32 +4,41 @@ import type { Actions, PageServerLoad } from './$types';
 
 import { db } from '$lib/database';
 
+import { z } from 'zod';
+
 export const load: PageServerLoad = async ({ locals }) => {
 	if (locals.user) {
 		throw redirect(302, '/dashboard');
 	}
 };
 
+const loginSchema = z.object({
+	email: z.string().min(1).max(64).email(),
+	password: z.string().min(6).max(32).trim()
+});
+
 export const actions: Actions = {
 	login: async ({ cookies, request }) => {
-		const data = await request.formData();
-		const email = data.get('email');
-		const password = data.get('password');
+		const formData = Object.fromEntries(await request.formData());
+		const email = String(formData.email);
 
-		if (typeof email !== 'string' || typeof password !== 'string' || !email || !password) {
-			return fail(400, { invalid: true });
+		// Validation
+		try {
+			const result = loginSchema.parse(formData);
+		} catch (err) {
+			return fail(400, { data: { email: email }, credentials: true });
 		}
 
+		// user doesn't exist
 		const user = await db.user.findUnique({ where: { email } });
-
 		if (!user) {
-			return fail(400, { credentials: true });
+			return fail(400, { data: { email: email }, credentials: true });
 		}
 
-		const userPassword = await bcrypt.compare(password, user.passwordHash);
-
+		// incorrect password
+		const userPassword = await bcrypt.compare(String(formData.password), user.passwordHash);
 		if (!userPassword) {
-			return fail(400, { credentials: true });
+			return fail(400, { data: { email: email }, credentials: true });
 		}
 
 		// generate new auth token each time

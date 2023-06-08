@@ -8,16 +8,15 @@
 <div class="container mx-auto mb-20 flex h-full flex-col items-center justify-start">
 	<h2 class="h2 my-10">Login</h2>
 
-	<form action="?/login" method="POST" class="flex flex-col gap-3" use:enhance>
+	<form action="?/login" method="POST" class="flex w-96 flex-col gap-3" use:enhance>
 		<label class="label">
 			<span>Email</span>
 			<input
 				class="input rounded-lg shadow-sm focus:border-b-2 focus:border-primary-600-300-token"
 				name="email"
-				title="email"
 				type="email"
-				placeholder="Email"
 				autocomplete="email"
+				value={form?.data?.email ?? ''}
 			/>
 		</label>
 
@@ -26,14 +25,12 @@
 			<input
 				name="password"
 				class="input rounded-lg shadow-sm focus:border-b-2 focus:border-primary-600-300-token"
-				title="password"
 				type="password"
-				placeholder="Password"
 			/>
 		</label>
 
 		{#if form?.credentials}
-			<p class="text-error-400">You have entered the wrong credentials.</p>
+			<p class="text-red-500">You have entered the wrong credentials.</p>
 		{/if}
 
 		<button type="submit" class="btn variant-filled-primary my-6 rounded-full">Sign in</button>
