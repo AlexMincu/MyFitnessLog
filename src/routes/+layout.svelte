@@ -20,7 +20,7 @@
 
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
 
-	import Navigation from '../components/navigation.svelte';
+	import Navigation from '../components/Navigation.svelte';
 	import { page } from '$app/stores';
 
 	const accountPopup: PopupSettings = {

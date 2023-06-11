@@ -14,7 +14,7 @@
 				<a class="btn" href="/dashboard" on:click={closeDrawer}> <span>Dashboard</span> </a>
 			</li>
 			<li class="hover:variant-soft-primary">
-				<a class="btn" href="/" on:click={closeDrawer}> <span>Training</span> </a>
+				<a class="btn" href="/training" on:click={closeDrawer}> <span>Training</span> </a>
 			</li>
 			<li class="hover:variant-soft-primary">
 				<a class="btn" href="/" on:click={closeDrawer}> <span>Habits</span> </a>
