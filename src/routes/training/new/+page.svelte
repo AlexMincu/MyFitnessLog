@@ -6,6 +6,7 @@
 
 	import type { Workout, Exercise, Set } from '$lib/services/customTypes';
 	import { SetType } from '$lib/services/customTypes';
+	import ErrorCard from '$lib/components/ErrorCard.svelte';
 
 	let workout: Workout = {
 		title: '',
@@ -20,7 +21,16 @@
 		placement: 'bottom'
 	};
 
-	let createError = '';
+	interface Error {
+		workoutTitle: string[];
+		workoutNote: string[];
+		exerciseTitle: string[];
+		exerciseNote: string[];
+		setWeight: string[];
+		setReps: string[];
+	}
+
+	let createError: Error;
 
 	async function createWorkoutTemplate() {
 		const response = await fetch('/training/new', {
@@ -38,7 +48,7 @@
 		} else {
 			createError = responseJSON;
 			// !
-			console.log(createError);
+			console.log('client error log', createError);
 		}
 	}
 
@@ -85,6 +95,25 @@
 </script>
 
 <div class="container mx-auto h-full w-[95%]">
+	<!-- ! Error Rendering -->
+	{#if createError}
+		{#if createError.workoutTitle}
+			<ErrorCard text={createError.workoutTitle[0]} />
+		{/if}
+		{#if createError.workoutNote}
+			<ErrorCard text={createError.workoutNote[0]} />
+		{/if}
+		{#if createError.exerciseTitle}
+			<ErrorCard text={createError.exerciseTitle[0]} />
+		{/if}
+		{#if createError.exerciseNote}
+			<ErrorCard text={createError.exerciseNote[0]} />
+		{/if}
+		{#if createError.setWeight}
+			<ErrorCard text={createError.setWeight[0]} />
+		{/if}
+	{/if}
+
 	<!-- ! Workout Template Component -->
 	<div class="card my-6 rounded-lg py-3">
 		<div class="my-4 flex w-full flex-col items-center justify-start gap-4">
