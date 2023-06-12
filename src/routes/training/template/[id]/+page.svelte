@@ -49,7 +49,10 @@
 	<div class="card z-[999] w-32 rounded-md" data-popup="optionsPopup">
 		<ul class="">
 			<li class="my-3 flex items-center justify-center">
-				<button class="btn variant-filled-secondary mx-2 w-full !rounded-lg">Edit</button>
+				<a
+					href="/training/template/{workout.id}/edit"
+					class="btn variant-filled-secondary mx-2 w-full !rounded-lg">Edit</a
+				>
 			</li>
 			<li class="my-3 flex items-center justify-center">
 				<button
