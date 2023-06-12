@@ -6,12 +6,6 @@ import { db } from '$lib/database';
 
 import { z } from 'zod';
 
-export const load: PageServerLoad = async ({ locals }) => {
-	if (locals.user) {
-		throw redirect(302, '/dashboard');
-	}
-};
-
 const loginSchema = z.object({
 	email: z.string().min(1).max(64).email(),
 	password: z.string().min(6).max(32).trim()

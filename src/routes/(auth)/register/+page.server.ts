@@ -6,12 +6,6 @@ import { Role } from '@prisma/client';
 
 import { z } from 'zod';
 
-export const load: PageServerLoad = async ({ locals }) => {
-	if (locals.user) {
-		throw redirect(302, '/dashboard');
-	}
-};
-
 const registerSchema = z
 	.object({
 		firstName: z
