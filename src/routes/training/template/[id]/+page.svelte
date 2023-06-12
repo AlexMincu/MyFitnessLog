@@ -19,7 +19,6 @@
 		});
 
 		const responseJSON = await response.json();
-		console.log(responseJSON.success);
 
 		if (responseJSON.success || responseJSON.notFound) {
 			goto('/training');
@@ -28,7 +27,7 @@
 </script>
 
 <!-- ! Workout Template Component -->
-<div class="card relative my-6 rounded-lg py-3">
+<div class="card relative py-3">
 	<button use:popup={optionsPopup} class="btn-icon absolute right-0 top-0 my-2 w-8"
 		><svg
 			fill="none"
@@ -66,15 +65,11 @@
 		<h4 class="h4 rounded-lg text-center">{workout.title}</h4>
 
 		<!-- ! Workout Note -->
-		<div class="w-[90%]">
-			<textarea
-				value={workout.note}
-				disabled
-				class="textarea rounded-lg"
-				name="workoutNote"
-				rows="2"
-				placeholder="Workout notes."
-			/>
+
+		<div
+			class=" textarea h-16 w-[90%] overflow-hidden overflow-y-scroll break-words rounded-lg p-2"
+		>
+			{workout.note}
 		</div>
 
 		<!-- ! Exercise -->
@@ -84,15 +79,10 @@
 				<h6 class="h6 mb-2 rounded-lg text-center">{exercise.title}</h6>
 
 				<!-- ! Exercise Note -->
-				<div class="w-full">
-					<textarea
-						value={exercise.note}
-						class="textarea variant-filled-surface w-full rounded-lg p-1.5 text-center"
-						name="exerciseNote"
-						disabled
-						rows="1"
-						placeholder="SET X REPS @ LSRPE | REST"
-					/>
+				<div
+					class=" textarea line mb-6 h-8 w-full overflow-hidden break-words rounded-lg p-2 text-center leading-4"
+				>
+					{exercise.note}
 				</div>
 
 				<!-- ! Sets -->
@@ -107,7 +97,7 @@
 					</div>
 
 					<!-- ! Set Rows -->
-					{#each exercise.sets as set, setIndex}
+					{#each exercise.sets as set}
 						<div class="grid w-full grid-cols-3 content-center justify-items-center text-center">
 							<!-- ! Set Order Number -->
 
@@ -141,5 +131,10 @@
 				</div>
 			</div>
 		{/each}
+
+		<button
+			class="btn variant-filled-primary mx-6 h-12 rounded-lg font-semibold uppercase tracking-wide"
+			>Start Workout</button
+		>
 	</div>
 </div>

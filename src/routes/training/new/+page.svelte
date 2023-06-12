@@ -41,8 +41,6 @@
 
 		const responseJSON = await response.json();
 
-		console.log(workout);
-
 		if (responseJSON.success) {
 			goto('/training');
 		} else {
@@ -94,7 +92,7 @@
 	}
 </script>
 
-<div class="container mx-auto h-full w-[95%]">
+<div class=" h-full w-full">
 	<!-- ! Error Rendering -->
 	{#if createError}
 		{#if createError.workoutTitle}
@@ -115,7 +113,7 @@
 	{/if}
 
 	<!-- ! Workout Template Component -->
-	<div class="card my-6 rounded-lg py-3">
+	<div class="card py-3">
 		<div class="my-4 flex w-full flex-col items-center justify-start gap-4">
 			<!-- ! Workout Title -->
 			<div>

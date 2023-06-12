@@ -59,7 +59,6 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		});
 	} catch (err) {
 		const { fieldErrors: errors } = err.flatten();
-		console.log('server error log', errors);
 		return json(errors);
 	}
 
