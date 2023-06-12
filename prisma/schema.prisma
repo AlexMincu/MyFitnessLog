@@ -38,7 +38,7 @@ model workout {
   favorite  Boolean?   @default(false)
   note      String?
   exercises exercise[]
-  user      user?      @relation(fields: [userId], references: [id])
+  user      user?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String?
 }
 
@@ -47,7 +47,7 @@ model exercise {
   title     String
   note      String?
   sets      set[]
-  workout   workout @relation(fields: [workoutId], references: [id])
+  workout   workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
   workoutId String
 }
 
@@ -58,6 +58,6 @@ model set {
   weight      Int?
   reps        Int?
   checked     Boolean   @default(false)
-  exercise    exercise? @relation(fields: [exerciseId], references: [id])
+  exercise    exercise? @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
   exerciseId  String?
 }
