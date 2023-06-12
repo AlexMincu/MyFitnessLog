@@ -6,7 +6,7 @@
 
 <div class="container mx-auto my-6 flex h-full w-[95%] flex-col items-center justify-start gap-5">
 	<a
-		href="/training/new"
+		href="/training/template/new"
 		class="variant-ghost-primary btn mx-6 my-2 rounded-lg py-2 font-semibold uppercase tracking-wide"
 		>create workout template</a
 	>

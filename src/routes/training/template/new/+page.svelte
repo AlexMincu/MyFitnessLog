@@ -33,7 +33,7 @@
 	let createError: Error;
 
 	async function createWorkoutTemplate() {
-		const response = await fetch('/training/new', {
+		const response = await fetch('/training/template/new', {
 			method: 'POST',
 			body: JSON.stringify(workout),
 			headers: { 'content-type': 'application/json' }
