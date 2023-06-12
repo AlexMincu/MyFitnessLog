@@ -29,6 +29,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 			email: user.email,
 			role: user.role
 		};
+	} else {
+		// no user with this session
+		event.cookies.set('session', '', {
+			path: '/',
+			expires: new Date(0)
+		});
+
+		throw redirect(302, '/login');
 	}
 
 	return await resolve(event);
