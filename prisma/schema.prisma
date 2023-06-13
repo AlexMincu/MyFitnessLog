@@ -34,12 +34,18 @@ enum Role {
 
 model workout {
   id        String     @id @default(uuid())
+  type      WorkoutType @default(ENTRY)
   title     String
   favorite  Boolean?   @default(false)
   note      String?
   exercises exercise[]
   user      user?      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String?
+}
+
+enum WorkoutType {
+  TEMPLATE
+  ENTRY
 }
 
 model exercise {

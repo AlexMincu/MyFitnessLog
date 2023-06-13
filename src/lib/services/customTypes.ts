@@ -1,5 +1,7 @@
 export type Workout = {
+	id: string | null;
 	title: string;
+	type: string;
 	favorite: boolean;
 	note: string;
 	exercises: Exercise[];

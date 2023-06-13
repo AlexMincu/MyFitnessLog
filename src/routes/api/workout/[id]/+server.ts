@@ -1,4 +1,4 @@
-import { error, json, redirect, type RequestHandler } from '@sveltejs/kit';
+import { error, json, type RequestHandler } from '@sveltejs/kit';
 
 import { Prisma } from '@prisma/client';
 import { z } from 'zod';
@@ -38,7 +38,7 @@ const setSchema = z.object({
 export const PUT: RequestHandler = async ({ url, request, locals }) => {
 	const workout: Workout = await request.json();
 	const pathArray = url.pathname.split('/');
-	const workoutTemplateId = pathArray[pathArray.length - 2];
+	const workoutTemplateId = pathArray[pathArray.length - 1];
 
 	// Validation
 	try {
@@ -123,6 +123,24 @@ export const PUT: RequestHandler = async ({ url, request, locals }) => {
 		}
 	} else {
 		return json({ unauthorized: true });
+	}
+
+	return json({ success: true });
+};
+
+export const DELETE: RequestHandler = async ({ request }) => {
+	const body = await request.json();
+
+	try {
+		await db.workout.delete({
+			where: {
+				id: body.workoutId
+			}
+		});
+	} catch (e) {
+		if (e instanceof Prisma.PrismaClientKnownRequestError) {
+			if (e.code === 'P2025') return json({ notFound: true });
+		}
 	}
 
 	return json({ success: true });

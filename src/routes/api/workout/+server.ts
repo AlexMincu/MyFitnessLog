@@ -1,6 +1,6 @@
-import { json, type RequestHandler } from '@sveltejs/kit';
+import { error, json, type RequestHandler } from '@sveltejs/kit';
 
-import { Prisma } from '@prisma/client';
+import { Prisma, type workout } from '@prisma/client';
 import { z } from 'zod';
 
 import { db } from '$lib/database';
