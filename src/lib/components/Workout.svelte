@@ -2,25 +2,26 @@
 	import { popup } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 
-	import type { Workout, Exercise, Set } from '$lib/services/customTypes';
+	import {
+		type Workout,
+		type Exercise,
+		type Set,
+		workoutStateType,
+		trainingStateType
+	} from '$lib/services/customTypes';
 	import { SetType } from '$lib/services/customTypes';
-
 	import {
 		createWorkoutRequest,
 		deleteWorkoutRequest,
 		editWorkoutRequest
 	} from '$lib/services/workoutService';
-	import { goto } from '$app/navigation';
 
-	enum State {
-		VIEW = 'VIEW',
-		EDIT = 'EDIT'
-	}
-
-	export let state: string;
+	// ******************* Variables *******************
+	export let workoutState: string;
 	export let workout: Workout;
+	export let setTrainingState: Function;
 
-	// Popups
+	// ******************* Popups *******************
 	const setTypePopup: PopupSettings = {
 		event: 'click',
 		target: 'fakeTarget',
@@ -33,7 +34,7 @@
 		placement: 'bottom'
 	};
 
-	// Buttons functions
+	// ******************* Function *******************
 	function addExercise() {
 		const exercise = {
 			title: '',
@@ -75,6 +76,11 @@
 		workout = workout;
 	}
 
+	function setWorkoutState(state: workoutStateType) {
+		workoutState = state;
+	}
+
+	// ******************* Async function -> fetch *******************
 	async function saveWorkout() {
 		if (workout.id) {
 			// Update existing template
@@ -82,7 +88,7 @@
 
 			if (response.success) {
 				console.log(`Workout: Updated ${workout.id} workout successfully!`);
-				toggleState();
+				setWorkoutState(workoutStateType.VIEW);
 			} else {
 				console.log(
 					`Workout: Something went wrong, couldn't update workout ${workout.id}. Response: `,
@@ -95,7 +101,8 @@
 
 			if (response.success) {
 				console.log('Workout: Create workout successfully!');
-				goto('/training');
+
+				setTrainingState(trainingStateType.VIEW_ALL);
 			} else {
 				console.log("Workout: Something went wrong, couldn't create workout. Response: ", response);
 			}
@@ -107,7 +114,8 @@
 			const response = await deleteWorkoutRequest(workout.id);
 			if (response.success) {
 				console.log(`Workout: Deleted workout ${workout.id} successfully!`);
-				goto('/training');
+
+				setTrainingState(trainingStateType.VIEW_ALL);
 			} else if (response.notFound) {
 				console.log(`Workout: Couldn't delete workout ${workout.id} - Not found`);
 			} else {
@@ -118,17 +126,18 @@
 			}
 		}
 	}
-
-	function toggleState() {
-		state = state === State.EDIT ? State.VIEW : State.EDIT;
-	}
 </script>
 
 <!-- ? Workout Card -->
-<div class="card relative py-3 flex w-full flex-col items-center justify-start gap-4">
-	{#if state === State.VIEW}
-		<!-- ? Options button -->
-		<div use:popup={optionsPopup} class="btn-icon absolute right-0 top-0 my-2 w-8">
+<div class="card py-3 flex w-full flex-col items-center justify-start gap-4">
+	<!-- ? Workout Card Header -->
+	<div class="relative w-full flex flex-row justify-between align-center">
+		<button
+			on:click={() => {
+				setTrainingState(trainingStateType.VIEW_ALL);
+			}}
+			class="btn-icon w-8 mx-3"
+		>
 			<svg
 				fill="none"
 				stroke="currentColor"
@@ -140,40 +149,63 @@
 				<path
 					stroke-linecap="round"
 					stroke-linejoin="round"
-					d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+					d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"
 				/>
 			</svg>
-		</div>
+		</button>
 
-		<!-- ? Options pop-up -->
-		<div class="card z-[999] w-32 rounded-md" data-popup="optionsPopup">
-			<ul>
-				<li class="my-3 flex items-center justify-center">
-					<button
-						on:click={toggleState}
-						class="btn variant-filled-secondary mx-2 w-full !rounded-lg"
-						type="button">Edit</button
-					>
-				</li>
-				<li class="my-3 flex items-center justify-center">
-					<button on:click={deleteWorkout} class="variant-filled-error btn mx-2 w-full !rounded-lg"
-						>Delete</button
-					>
-				</li>
-			</ul>
-		</div>
-	{/if}
+		{#if workoutState === workoutStateType.VIEW}
+			<!-- ? Options button -->
+			<div use:popup={optionsPopup} class="btn-icon w-8 mx-1">
+				<svg
+					fill="none"
+					stroke="currentColor"
+					stroke-width="1.5"
+					viewBox="0 0 24 24"
+					xmlns="http://www.w3.org/2000/svg"
+					aria-hidden="true"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+					/>
+				</svg>
+			</div>
+
+			<!-- ? Options pop-up -->
+			<div class="card z-[999] w-32 rounded-md" data-popup="optionsPopup">
+				<ul>
+					<li class="my-3 flex items-center justify-center">
+						<button
+							on:click={() => {
+								setWorkoutState(workoutStateType.EDIT);
+							}}
+							class="btn variant-filled-secondary mx-2 w-full !rounded-lg"
+							type="button">Edit</button
+						>
+					</li>
+					<li class="my-3 flex items-center justify-center">
+						<button
+							on:click={deleteWorkout}
+							class="variant-filled-error btn mx-2 w-full !rounded-lg">Delete</button
+						>
+					</li>
+				</ul>
+			</div>
+		{/if}
+	</div>
 
 	<!-- ? Workout Title -->
 	<div>
-		{#if state === State.EDIT}
+		{#if workoutState === workoutStateType.EDIT}
 			<input
 				bind:value={workout.title}
 				class="h4 input rounded-lg text-center"
 				type="text"
 				placeholder="Workout Title"
 			/>
-		{:else if state === State.VIEW}
+		{:else if workoutState === workoutStateType.VIEW}
 			<div class=" h4 rounded-lg text-center {workout.title ? '' : 'text-red-400'}">
 				{workout.title ? workout.title : 'Missing title!'}
 			</div>
@@ -182,14 +214,14 @@
 
 	<!-- ? Workout Note -->
 	<div class="w-[90%]">
-		{#if state === State.EDIT}
+		{#if workoutState === workoutStateType.EDIT}
 			<textarea
 				bind:value={workout.note}
 				class="textarea rounded-lg"
 				rows="2"
 				placeholder="Workout notes."
 			/>
-		{:else if state === State.VIEW}
+		{:else if workoutState === workoutStateType.VIEW}
 			<div class=" textarea h-16 overflow-hidden overflow-y-scroll break-words rounded-lg p-2">
 				{workout.note}
 			</div>
@@ -203,14 +235,14 @@
 			<!-- ? Exercise Title -->
 			<!-- TODO - Exercise database select popup/modal -->
 			<div>
-				{#if state === State.EDIT}
+				{#if workoutState === workoutStateType.EDIT}
 					<input
 						bind:value={exercise.title}
 						class="h6 input mb-2 rounded-lg text-center"
 						type="text"
 						placeholder="Exercise"
 					/>
-				{:else if state === State.VIEW}
+				{:else if workoutState === workoutStateType.VIEW}
 					<div class="h6 mb-2 rounded-lg text-center {exercise.title ? '' : 'text-red-400'}">
 						{exercise.title ? exercise.title : 'Missing title!'}
 					</div>
@@ -219,14 +251,14 @@
 
 			<!-- ? Exercise Note -->
 			<div class="w-full">
-				{#if state === State.EDIT}
+				{#if workoutState === workoutStateType.EDIT}
 					<textarea
 						bind:value={exercise.note}
 						class="textarea variant-filled-surface w-full rounded-lg p-1.5 text-center"
 						rows="1"
 						placeholder="SET X REPS @ LSRPE | REST"
 					/>
-				{:else if state === State.VIEW}
+				{:else if workoutState === workoutStateType.VIEW}
 					<div
 						class="textarea line mb-3 h-10 w-full overflow-hidden break-words rounded-lg p-2 text-center leading-6"
 					>
@@ -249,7 +281,7 @@
 					<!-- ? Set container -->
 					<div class="grid w-full grid-cols-3 content-center justify-items-center text-center">
 						<!-- ? Set Order Number Column -->
-						{#if state === State.EDIT}
+						{#if workoutState === workoutStateType.EDIT}
 							<div
 								use:popup={{
 									...setTypePopup,
@@ -307,7 +339,7 @@
 									</li>
 								</ul>
 							</div>
-						{:else if state === State.VIEW}
+						{:else if workoutState === workoutStateType.VIEW}
 							<div
 								class="btn-icon cursor-default !bg-transparent {set.type === 'W'
 									? 'text-orange-400'
@@ -325,13 +357,13 @@
 
 						<!-- ? Set Weight Column -->
 						<div class="w-full">
-							{#if state === State.EDIT}
+							{#if workoutState === workoutStateType.EDIT}
 								<input
 									bind:value={set.weight}
 									type="text"
 									class="input my-auto h-[80%] w-[80%] rounded-2xl text-center"
 								/>
-							{:else if state === State.VIEW}
+							{:else if workoutState === workoutStateType.VIEW}
 								<div
 									class="input m-auto flex h-[80%] w-[80%] items-center justify-center rounded-2xl"
 								>
@@ -342,14 +374,14 @@
 
 						<!-- ? Set Reps Column -->
 						<div class="w-full">
-							{#if state === State.EDIT}
+							{#if workoutState === workoutStateType.EDIT}
 								<input
 									bind:value={set.reps}
 									type="text"
 									name="setReps"
 									class="input my-auto h-[80%] w-[80%] rounded-2xl text-center"
 								/>
-							{:else if state === State.VIEW}
+							{:else if workoutState === workoutStateType.VIEW}
 								<div
 									class="input m-auto flex h-[80%] w-[80%] items-center justify-center rounded-2xl"
 								>
@@ -361,7 +393,7 @@
 				{/each}
 
 				<!-- ? Add Set Button -->
-				{#if state === State.EDIT}
+				{#if workoutState === workoutStateType.EDIT}
 					<button
 						on:click={() => {
 							addSet(exercise);
@@ -376,7 +408,7 @@
 	{/each}
 
 	<!-- ? Add Exercise Button -->
-	{#if state === State.EDIT}
+	{#if workoutState === workoutStateType.EDIT}
 		<button
 			on:click={addExercise}
 			type="button"
@@ -385,7 +417,7 @@
 		>
 	{/if}
 
-	{#if state === State.EDIT}
+	{#if workoutState === workoutStateType.EDIT}
 		<!-- ? Create/Update Workout Template Button -->
 		<button
 			on:click={saveWorkout}
@@ -393,7 +425,7 @@
 			class="btn variant-filled-success mx-6 h-8 rounded-lg font-semibold uppercase tracking-wide"
 			>save workout template</button
 		>
-	{:else if state === State.VIEW}
+	{:else if workoutState === workoutStateType.VIEW}
 		<!-- ? Start Workout Template -->
 		<button
 			on:click={() => {

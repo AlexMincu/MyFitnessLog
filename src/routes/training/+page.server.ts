@@ -1,9 +1,7 @@
-import { redirect } from '@sveltejs/kit';
-
-import type { PageServerLoad } from './$types';
-
+import type { PageServerLoad } from '../$types';
 import { db } from '$lib/database';
 
+// TODO
 export const load: PageServerLoad = async ({ locals }) => {
 	const user = await db.user.findUnique({
 		where: {
@@ -29,6 +27,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 			}
 		});
 
-		return { workoutTemplates };
+		if (workoutTemplates) {
+			return { workoutTemplates: workoutTemplates };
+		}
 	}
+
+	console.error('SERVER: workout templates not found');
 };

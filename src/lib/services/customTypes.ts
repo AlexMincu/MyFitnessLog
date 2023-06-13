@@ -25,3 +25,14 @@ export enum SetType {
 	W = 'W',
 	D = 'D'
 }
+
+export enum trainingStateType {
+	VIEW_ONE = 'VIEW_ONE',
+	VIEW_ALL = 'VIEW_ALL',
+	NEW = 'NEW'
+}
+
+export enum workoutStateType {
+	VIEW = 'VIEW',
+	EDIT = 'EDIT'
+}
