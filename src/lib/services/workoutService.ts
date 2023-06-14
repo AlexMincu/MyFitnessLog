@@ -38,8 +38,8 @@ export function validateWorkout(workout: Workout) {
 			}
 		});
 	});
-	console.log([...validationErrors]);
-	if (validationErrors) return { error: [...validationErrors] };
+	console.log('Validation Errors', [...validationErrors]);
+	if (validationErrors.length) return { error: [...validationErrors] };
 
 	return { success: true };
 }

@@ -42,7 +42,7 @@
 		<button type="submit" class="btn variant-filled-primary my-6 rounded-full">Sign in</button>
 
 		<div class="mx-auto">
-			Not a memeber yet? <a class="variant-ghost-primary btn-sm ml-2" href="/register">Sign up</a>
+			Not a member yet? <a class="variant-ghost-primary btn-sm ml-2" href="/register">Sign up</a>
 		</div>
 	</form>
 </div>
