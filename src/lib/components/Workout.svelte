@@ -22,15 +22,21 @@
 	export let setTrainingState: Function;
 
 	// ******************* Popups *******************
+	const optionsPopup: PopupSettings = {
+		event: 'click',
+		target: 'optionsPopup',
+		placement: 'bottom'
+	};
+
 	const setTypePopup: PopupSettings = {
 		event: 'click',
 		target: 'fakeTarget',
 		placement: 'bottom'
 	};
 
-	const optionsPopup: PopupSettings = {
+	const exerciseOptionsPopup: PopupSettings = {
 		event: 'click',
-		target: 'optionsPopup',
+		target: 'fakeTarget',
 		placement: 'bottom'
 	};
 
@@ -82,6 +88,12 @@
 		addSet(exercise);
 
 		workout.exercises = [...workout.exercises, exercise];
+	}
+
+	function removeExercise(exerciseIndex: number) {
+		workout.exercises.splice(exerciseIndex, 1);
+
+		workout = workout;
 	}
 
 	function addSet(exercise: Exercise) {
@@ -288,12 +300,54 @@
 			<!-- TODO - Exercise database select popup/modal -->
 			<div>
 				{#if workoutState === workoutStateType.EDIT}
-					<input
-						bind:value={exercise.title}
-						class="h6 input mb-2 rounded-lg text-center"
-						type="text"
-						placeholder="Exercise"
-					/>
+					<div class="w-full relative">
+						<input
+							bind:value={exercise.title}
+							class="h6 input h-9 mb-2 rounded-lg text-center"
+							type="text"
+							placeholder="Exercise"
+						/>
+
+						<!-- ? Exercise Options Popup Button -->
+						<div
+							use:popup={{
+								...exerciseOptionsPopup,
+								target: `exerciseOptionsPopup-${exerciseIndex}`
+							}}
+							class="btn-icon w-8 h-9 absolute right-[-35px] top-0"
+						>
+							<svg
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.5"
+								viewBox="0 0 24 24"
+								xmlns="http://www.w3.org/2000/svg"
+								aria-hidden="true"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+								/>
+							</svg>
+						</div>
+
+						<!-- ? Exercise Options Popup -->
+						<div data-popup={`exerciseOptionsPopup-${exerciseIndex}`}>
+							<div
+								class="z-[999] card rounded-md align-center gap-3 justify-center flex flex-col py-2 px-5"
+							>
+								<div class=" text-center w-full">Options</div>
+								<button
+									on:click={() => {
+										removeExercise(exerciseIndex);
+									}}
+									class="variant-ghost-error w-28 h-8 btn m-0 p-0.5 text-center uppercase"
+									>Delete</button
+								>
+							</div>
+						</div>
+					</div>
 				{:else if workoutState === workoutStateType.VIEW}
 					<div class="h6 mb-2 rounded-lg text-center {exercise.title ? '' : 'text-red-400'}">
 						{exercise.title ? exercise.title : 'Missing title!'}
@@ -357,7 +411,10 @@
 							</div>
 
 							<!-- ? Set Popup -->
-							<div data-popup={`setTypePopup-${exerciseIndex}-${setIndex}`} class="card p-4">
+							<div
+								data-popup={`setTypePopup-${exerciseIndex}-${setIndex}`}
+								class="rounded-lg card p-4 z-[888]"
+							>
 								<ul class="list flex flex-col gap-3 font-semibold tracking-wider">
 									<li class="flex flex-row align-start mr-auto">
 										<div class="w-14 text-sm text-start">Type</div>

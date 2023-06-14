@@ -17,13 +17,13 @@ async function updateWorkout(id: string, workout: Workout) {
 			}
 		});
 
-		workout.exercises.forEach(async (exercise: Exercise) => {
-			await db.exercise.deleteMany({
-				where: {
-					workoutId: id
-				}
-			});
+		await db.exercise.deleteMany({
+			where: {
+				workoutId: id
+			}
+		});
 
+		workout.exercises.forEach(async (exercise: Exercise) => {
 			const exerciseEntry = await db.exercise.create({
 				data: {
 					title: exercise.title,
