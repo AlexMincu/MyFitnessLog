@@ -13,7 +13,8 @@
 		Drawer,
 		drawerStore,
 		storePopup,
-		LightSwitch
+		LightSwitch,
+		Toast
 	} from '@skeletonlabs/skeleton';
 	import type { PopupSettings, DrawerSettings } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
@@ -53,6 +54,9 @@
 	<hr class="!border-t-2" />
 	<Navigation />
 </Drawer>
+
+<!-- Toast -->
+<Toast max={5} />
 
 <!-- App Shell -->
 <AppShell>

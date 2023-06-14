@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { popup } from '@skeletonlabs/skeleton';
+	import { popup, toastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 
 	import {
@@ -33,6 +33,44 @@
 		target: 'optionsPopup',
 		placement: 'bottom'
 	};
+
+	// ******************* Toasts *******************
+	const validationErrorToastSetting: ToastSettings = {
+		message: '',
+		background: 'variant-filled-error',
+		timeout: 2500
+	};
+
+	function triggerValidationErrorToasts(validationErrors: any[]) {
+		validationErrors.forEach((errorObject) => {
+			const { workoutTitle, exerciseTitle, setWeight, setReps } = errorObject;
+
+			if (workoutTitle) {
+				toastStore.trigger({
+					...validationErrorToastSetting,
+					message: `${workoutTitle[0]}`
+				});
+			}
+			if (exerciseTitle) {
+				toastStore.trigger({
+					...validationErrorToastSetting,
+					message: `${exerciseTitle[0]}`
+				});
+			}
+			if (setWeight) {
+				toastStore.trigger({
+					...validationErrorToastSetting,
+					message: `${setWeight[0]}`
+				});
+			}
+			if (setReps) {
+				toastStore.trigger({
+					...validationErrorToastSetting,
+					message: `${setReps[0]}`
+				});
+			}
+		});
+	}
 
 	// ******************* Function *******************
 	function addExercise() {
@@ -91,6 +129,8 @@
 
 				setWorkoutState(workoutStateType.VIEW);
 			} else if (response.validationErrors) {
+				triggerValidationErrorToasts(response.validationErrors);
+
 				console.log(
 					"Workout: Couldn't update workout. Validation Errors: ",
 					response.validationErrors
@@ -107,6 +147,8 @@
 
 				setTrainingState(trainingStateType.VIEW_ALL);
 			} else if (response.validationErrors) {
+				triggerValidationErrorToasts(response.validationErrors);
+
 				console.log(
 					"Workout: Couldn't create workout. Validation Errors: ",
 					response.validationErrors

@@ -15,7 +15,8 @@ export const actions: Actions = {
 		try {
 			const result = loginSchema.parse(formData);
 		} catch (err) {
-			return fail(400, { data: { email: email }, credentials: true });
+			const { fieldErrors: errors } = err.flatten();
+			return fail(400, { data: { email: email }, validationErrors: errors });
 		}
 
 		// user doesn't exist

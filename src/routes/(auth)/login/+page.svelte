@@ -29,7 +29,13 @@
 			/>
 		</label>
 
-		{#if form?.credentials}
+		{#if form?.validationErrors}
+			{#if form?.validationErrors.email}
+				<p class="text-red-500">{form?.validationErrors.email[0]}</p>
+			{:else if form?.validationErrors.password}
+				<p class="text-red-500">{form?.validationErrors.password[0]}</p>
+			{/if}
+		{:else if form?.credentials}
 			<p class="text-red-500">You have entered the wrong credentials.</p>
 		{/if}
 

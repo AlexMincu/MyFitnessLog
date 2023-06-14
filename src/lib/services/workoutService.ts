@@ -2,28 +2,44 @@ import type { Workout } from '$lib/services/customTypes';
 import { exerciseSchema, setSchema, workoutTemplateSchema } from '$lib/validationSchemas';
 
 export function validateWorkout(workout: Workout) {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	let validationErrors: any[] = [];
+
 	try {
 		workoutTemplateSchema.parse({
 			workoutTitle: workout.title,
 			workoutNote: workout.note
 		});
+	} catch (err) {
+		const { fieldErrors: errors } = err.flatten();
+		validationErrors = [...validationErrors, errors];
+	}
 
-		workout.exercises.forEach((exercise) => {
+	workout.exercises.forEach((exercise) => {
+		try {
 			exerciseSchema.parse({
 				exerciseTitle: exercise.title,
 				exerciseNote: exercise.note
 			});
-			exercise.sets.forEach((set) => {
+		} catch (err) {
+			const { fieldErrors: errors } = err.flatten();
+			validationErrors = [...validationErrors, errors];
+		}
+
+		exercise.sets.forEach((set) => {
+			try {
 				setSchema.parse({
 					setWeight: Number(set.weight),
 					setReps: Number(set.reps)
 				});
-			});
+			} catch (err) {
+				const { fieldErrors: errors } = err.flatten();
+				validationErrors = [...validationErrors, errors];
+			}
 		});
-	} catch (err) {
-		const { fieldErrors: errors } = err.flatten();
-		return { error: errors };
-	}
+	});
+	console.log([...validationErrors]);
+	if (validationErrors) return { error: [...validationErrors] };
 
 	return { success: true };
 }
