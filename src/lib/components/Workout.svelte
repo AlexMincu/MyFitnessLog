@@ -98,6 +98,12 @@
 		updateExerciseUI(exercise);
 	}
 
+	function removeSet(setIndex: number, exercise: Exercise) {
+		exercise.sets.splice(setIndex, 1);
+
+		updateExerciseUI(exercise);
+	}
+
 	function updateSetsOrderNumber(sets: Set[]) {
 		let index = 1;
 
@@ -316,7 +322,9 @@
 			<!-- ? Sets container -->
 			<div class="flex flex-col w-full items-center">
 				<!-- ? Sets Header -->
-				<div class="mb-1.5 grid w-full grid-cols-3 content-center justify-items-center text-center">
+				<div
+					class="mb-1.5 grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
+				>
 					<div>Set</div>
 					<div>Weight</div>
 					<div>Reps</div>
@@ -325,15 +333,17 @@
 				<!-- ? Sets Rows -->
 				{#each exercise.sets as set, setIndex}
 					<!-- ? Set container -->
-					<div class="grid w-full grid-cols-3 content-center justify-items-center text-center">
-						<!-- ? Set Order Number Column -->
+					<div
+						class="grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
+					>
+						<!-- ? Set Options Column -->
 						{#if workoutState === workoutStateType.EDIT}
 							<div
 								use:popup={{
 									...setTypePopup,
 									target: `setTypePopup-${exerciseIndex}-${setIndex}`
 								}}
-								class="btn-icon !bg-transparent {set.type === 'W'
+								class="cursor-pointer btn-icon {set.type === 'W'
 									? 'text-orange-400'
 									: ''} {set.type === 'D' ? 'text-red-400' : ''}"
 							>
@@ -347,42 +357,49 @@
 							</div>
 
 							<!-- ? Set Popup -->
-							<div
-								data-popup={`setTypePopup-${exerciseIndex}-${setIndex}`}
-								class="card align-center p-4"
-							>
-								<ul
-									class="list flex flex-col justify-center text-center text-sm font-semibold tracking-wider"
-								>
-									<li>
+							<div data-popup={`setTypePopup-${exerciseIndex}-${setIndex}`} class="card p-4">
+								<ul class="list flex flex-col gap-3 font-semibold tracking-wider">
+									<li class="flex flex-row align-start mr-auto">
+										<div class="w-14 text-sm text-start">Type</div>
+
 										<button
 											on:click={() => {
 												set.type = SetType.N;
 												updateExerciseUI(exercise);
 											}}
-											class="btn m-0 w-full p-0.5 text-center uppercase">Normal</button
+											class=" variant-soft-secondary !m-1 btn btn-sm text-center uppercase w-22 h-7"
+											>Normal</button
 										>
-									</li>
-									<li>
+
 										<button
 											on:click={() => {
 												set.type = SetType.W;
 												updateExerciseUI(exercise);
 											}}
-											class="btn m-0 w-full p-0.5 text-center uppercase text-orange-400"
+											class="variant-soft-warning btn !m-1 btn-sm text-center uppercase w-22 h-7"
 											>Warmup</button
 										>
-									</li>
-									<li>
+
 										<button
 											on:click={() => {
 												set.type = SetType.D;
 												updateExerciseUI(exercise);
 											}}
-											class="btn m-0 w-full p-0.5 text-center uppercase text-red-400"
+											class="variant-soft-error btn !m-1 btn-sm text-center uppercase w-22 h-7"
 											>DropSet</button
 										>
 									</li>
+									<li class="flex flex-row mr-auto">
+										<div class="w-14 text-sm text-start">Options</div>
+										<button
+											on:click={() => {
+												removeSet(setIndex, exercise);
+											}}
+											class="variant-ghost-error w-28 h-8 btn m-0 p-0.5 text-center uppercase"
+											>Delete Set</button
+										>
+									</li>
+									<li />
 								</ul>
 							</div>
 						{:else if workoutState === workoutStateType.VIEW}

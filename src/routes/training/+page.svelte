@@ -46,7 +46,10 @@
 					<h2 class="h2 text-surface-800-100-token">{workout.title}</h2>
 					<ul class="list">
 						{#each workout.exercises as exercise}
-							<li class="list-item">{exercise.sets.length} x {exercise.title}</li>
+							<li class="list-item">
+								{exercise.sets.length ? exercise.sets.length + ' x ' : ''}
+								{exercise.title}
+							</li>
 						{/each}
 					</ul>
 				</button>
