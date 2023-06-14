@@ -416,8 +416,8 @@
 								class="rounded-lg card p-4 z-[888]"
 							>
 								<ul class="list flex flex-col gap-3 font-semibold tracking-wider">
-									<li class="flex flex-row align-start mr-auto">
-										<div class="w-14 text-sm text-start">Type</div>
+									<li class="flex flex-col xs:flex-row align-center justify-center">
+										<div class="w-14 text-sm text-center">Type</div>
 
 										<button
 											on:click={() => {
