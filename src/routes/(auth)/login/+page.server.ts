@@ -1,15 +1,10 @@
 import { fail, redirect } from '@sveltejs/kit';
 import bcrypt from 'bcrypt';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 
 import { db } from '$lib/database';
 
-import { z } from 'zod';
-
-const loginSchema = z.object({
-	email: z.string().min(1).max(64).email(),
-	password: z.string().min(6).max(32).trim()
-});
+import { loginSchema } from '$lib/validationSchemas';
 
 export const actions: Actions = {
 	login: async ({ cookies, request }) => {

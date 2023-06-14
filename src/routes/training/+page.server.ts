@@ -1,36 +1,52 @@
 import type { PageServerLoad } from '../$types';
 import { db } from '$lib/database';
 
-// TODO
-export const load: PageServerLoad = async ({ locals }) => {
+async function getUserId(email: string) {
 	const user = await db.user.findUnique({
 		where: {
-			email: locals.user.email
+			email
 		}
 	});
 
-	if (user) {
-		const workoutTemplates = await db.workout.findMany({
-			where: {
-				userId: user.id
-			},
-			include: {
-				exercises: {
-					include: {
-						sets: {
-							orderBy: {
-								orderNumber: 'asc'
-							}
+	if (user) return user.id;
+
+	return null;
+}
+
+async function getWorkouts(userId: string) {
+	const workouts = await db.workout.findMany({
+		where: {
+			userId
+		},
+		include: {
+			exercises: {
+				include: {
+					sets: {
+						orderBy: {
+							orderNumber: 'asc'
 						}
 					}
 				}
 			}
-		});
+		}
+	});
 
-		if (workoutTemplates) {
-			return { workoutTemplates: workoutTemplates };
+	if (workouts) return workouts;
+
+	return null;
+}
+
+export const load: PageServerLoad = async ({ locals }) => {
+	const userId = await getUserId(locals.user.email);
+
+	if (userId) {
+		const workouts = await getWorkouts(userId);
+
+		if (workouts) {
+			workouts.forEach((workout) => {
+				workout.userId = null;
+			});
+			return { workoutTemplates: workouts };
 		}
 	}
-
-	console.error('SERVER: workout templates not found');
 };

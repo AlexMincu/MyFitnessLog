@@ -87,13 +87,16 @@
 			const response = await editWorkoutRequest(workout);
 
 			if (response.success) {
-				console.log(`Workout: Updated ${workout.id} workout successfully!`);
+				console.log(`Workout: Updated workout successfully!`);
+
 				setWorkoutState(workoutStateType.VIEW);
-			} else {
+			} else if (response.validationErrors) {
 				console.log(
-					`Workout: Something went wrong, couldn't update workout ${workout.id}. Response: `,
-					response
+					"Workout: Couldn't update workout. Validation Errors: ",
+					response.validationErrors
 				);
+			} else {
+				console.log(`Workout: Something went wrong, couldn't update workout. Response: `, response);
 			}
 		} else {
 			// Create new template
@@ -103,8 +106,13 @@
 				console.log('Workout: Create workout successfully!');
 
 				setTrainingState(trainingStateType.VIEW_ALL);
+			} else if (response.validationErrors) {
+				console.log(
+					"Workout: Couldn't create workout. Validation Errors: ",
+					response.validationErrors
+				);
 			} else {
-				console.log("Workout: Something went wrong, couldn't create workout. Response: ", response);
+				console.log("Workout: Something went wrong, couldn't create workout. Error: ", response);
 			}
 		}
 	}
@@ -112,17 +120,13 @@
 	async function deleteWorkout() {
 		if (workout.id) {
 			const response = await deleteWorkoutRequest(workout.id);
+
 			if (response.success) {
-				console.log(`Workout: Deleted workout ${workout.id} successfully!`);
+				console.log(`Workout: Deleted workout successfully!`);
 
 				setTrainingState(trainingStateType.VIEW_ALL);
-			} else if (response.notFound) {
-				console.log(`Workout: Couldn't delete workout ${workout.id} - Not found`);
 			} else {
-				console.log(
-					`Workout: Something went wrong, couldn't delete workout ${workout.id}. Response: `,
-					response
-				);
+				console.log(`Workout: Something went wrong, couldn't delete workout. Response: `, response);
 			}
 		}
 	}
