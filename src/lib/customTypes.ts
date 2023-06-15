@@ -26,13 +26,13 @@ export enum SetType {
 	D = 'D'
 }
 
-export enum trainingStateType {
+export enum trainingState {
 	VIEW_ONE = 'VIEW_ONE',
 	VIEW_ALL = 'VIEW_ALL',
 	NEW = 'NEW'
 }
 
-export enum workoutStateType {
+export enum workoutState {
 	VIEW = 'VIEW',
 	EDIT = 'EDIT'
 }
@@ -44,7 +44,19 @@ export type ExerciseTemplate = {
 	userId: string | null;
 };
 
-export enum exerciseTemplatesStateType {
+export enum exerciseTemplatesDrawerState {
 	OPEN,
 	CLOSE
+}
+
+export enum exerciseTemplateState {
+	VIEW,
+	EDIT
+}
+
+export interface State {
+	training: trainingState;
+	workout: workoutState;
+	exerciseTemplatesDrawer: exerciseTemplatesDrawerState;
+	exerciseTemplate: exerciseTemplateState;
 }

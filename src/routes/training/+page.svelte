@@ -1,57 +1,64 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
 	import { page } from '$app/stores';
-	import ExerciseTemplates from '$lib/components/ExerciseTemplates.svelte';
 
+	import ExerciseTemplates from '$lib/components/ExerciseTemplates.svelte';
 	import Workout from '$lib/components/Workout.svelte';
+
 	import {
-		exerciseTemplatesStateType,
-		trainingStateType,
-		workoutStateType,
-		type Workout as WorkoutType
+		exerciseTemplatesDrawerState,
+		trainingState,
+		workoutState,
+		exerciseTemplateState
 	} from '$lib/customTypes';
+	import type { State, Workout as WorkoutType } from '$lib/customTypes';
 
 	// ******************* Variables *******************
+
+	let state: State = {
+		training: trainingState.VIEW_ALL,
+		workout: workoutState.VIEW,
+		exerciseTemplatesDrawer: exerciseTemplatesDrawerState.CLOSE,
+		exerciseTemplate: exerciseTemplateState.VIEW
+	};
+
 	$: workoutTemplates = $page.data.workoutTemplates;
-	let currentWorkout: WorkoutType;
-	let trainingState: trainingStateType = trainingStateType.VIEW_ALL;
 	$: exerciseTemplates = $page.data.exerciseTemplates;
-	let exerciseTemplatesState = exerciseTemplatesStateType.CLOSE;
+
+	let currentWorkout: WorkoutType;
 
 	// ******************* Functions *******************
-
-	function setTrainingState(state: trainingStateType): void {
-		trainingState = state;
-		// When state changes - refresh UI
-		invalidateAll();
-	}
-
-	function setExerciseTemplatesState(state: exerciseTemplatesStateType) {
-		exerciseTemplatesState = state;
-		// When state changes - refresh UI
-		invalidateAll();
-	}
 </script>
 
 <!-- ! Exercise Templates 'Drawer' -->
 <div class="w-full h-full relative">
 	<div
-		class="transition-all bg-surface-100-800-token w-full h-full overflow-y-scroll overflow-x-hidden absolute left-0 top-0 {exerciseTemplatesState ===
-		exerciseTemplatesStateType.CLOSE
+		class="transition-all bg-surface-100-800-token w-full h-full overflow-y-scroll overflow-x-hidden absolute left-0 top-0 {state.exerciseTemplatesDrawer ===
+		exerciseTemplatesDrawerState.CLOSE
 			? '-translate-x-full'
 			: ''}"
 	>
-		<ExerciseTemplates {exerciseTemplates} {setExerciseTemplatesState} />
+		<ExerciseTemplates bind:state {exerciseTemplates} />
 	</div>
 
 	<!-- ! VIEW_ALL STATE -->
-	{#if trainingState === trainingStateType.VIEW_ALL}
+	{#if state.training === trainingState.VIEW_ALL}
 		<div
 			class="container mx-auto flex h-full w-[95%] py-6 flex-col items-center justify-start gap-5"
 		>
 			<button
 				on:click={() => {
-					setTrainingState(trainingStateType.NEW);
+					state = { ...state, training: trainingState.NEW, workout: workoutState.EDIT };
+
+					currentWorkout = {
+						id: null,
+						title: '',
+						type: 'TEMPLATE',
+						favorite: false,
+						note: '',
+						exercises: []
+					};
+					invalidateAll();
 				}}
 				class="variant-ghost-primary btn mx-6 my-2 rounded-lg py-2 font-semibold uppercase tracking-wide"
 				>create workout template</button
@@ -59,7 +66,7 @@
 
 			<button
 				on:click={() => {
-					exerciseTemplatesState = exerciseTemplatesStateType.OPEN;
+					state.exerciseTemplatesDrawer = exerciseTemplatesDrawerState.OPEN;
 				}}
 				class="variant-ghost-secondary px-4 btn active:filter-none hover:filter-none duration-75 mx-12 mb-2 rounded-lg py-2 font-semibold uppercase tracking-wide"
 				>Exercise Templates</button
@@ -69,8 +76,10 @@
 				{#each workoutTemplates as workout}
 					<button
 						on:click={() => {
-							setTrainingState(trainingStateType.VIEW_ONE);
 							currentWorkout = workout;
+
+							state = { ...state, training: trainingState.VIEW_ONE, workout: workoutState.VIEW };
+							invalidateAll();
 						}}
 						class="card card-hover flex w-full cursor-pointer flex-col items-center justify-start rounded-lg py-3"
 					>
@@ -88,23 +97,13 @@
 			{/if}
 		</div>
 
-		<!-- ! NEW STATE -->
-	{:else if trainingState === trainingStateType.NEW}
-		<Workout
-			workoutState={workoutStateType.EDIT}
-			workout={{
-				id: null,
-				title: '',
-				type: 'TEMPLATE',
-				favorite: false,
-				note: '',
-				exercises: []
-			}}
-			{setTrainingState}
-		/>
-
-		<!-- ! VIEW_ONE STATE -->
-	{:else if trainingState === trainingStateType.VIEW_ONE}
-		<Workout workoutState={workoutStateType.VIEW} workout={currentWorkout} {setTrainingState} />
+		<!-- ! Workout Component -->
+	{:else}
+		<!-- TODO - hide inputs when drawer open -->
+		<div
+			class={state.exerciseTemplatesDrawer === exerciseTemplatesDrawerState.OPEN ? 'hidden' : ''}
+		>
+			<Workout bind:state bind:workout={currentWorkout} />
+		</div>
 	{/if}
 </div>

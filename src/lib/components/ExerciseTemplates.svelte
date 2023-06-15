@@ -1,57 +1,55 @@
 <script lang="ts">
 	import { invalidateAll } from '$app/navigation';
-	import { exerciseTemplatesStateType, type ExerciseTemplate } from '$lib/customTypes';
+
+	import { toastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+
+	import { exerciseTemplatesDrawerState, exerciseTemplateState } from '$lib/customTypes';
+	import type { ExerciseTemplate, State } from '$lib/customTypes';
+	import type { exerciseTemplate } from '@prisma/client';
+
 	import {
 		createExerciseTemplateRequest,
 		deleteExerciseTemplateRequest,
 		updateExerciseTemplateRequest
 	} from '$lib/services/exerciseTemplateService';
-	import type { exerciseTemplate } from '@prisma/client';
-	import { toastStore, type ToastSettings } from '@skeletonlabs/skeleton';
+
+	// ******************* Variables *******************
 
 	export let exerciseTemplates: exerciseTemplate[];
-	export let setExerciseTemplatesState: Function;
 
-	enum State {
-		VIEW,
-		EDIT
-	}
-	let state: State = State.VIEW;
+	export let state: State;
 
-	let currentExercise: ExerciseTemplate = {
+	let currentExerciseTemplate: ExerciseTemplate = {
 		id: null,
 		title: '',
 		description: '',
 		userId: null
 	};
 
+	// ******************* Enable Inputs Utility *******************
 	let enableInputs: boolean;
 
 	// if userId = null => update standalone exercise => enableInputs false
 	// if id = null => create exercise => enableInputs = true
-	$: if (currentExercise.userId) {
+	$: if (currentExerciseTemplate.userId) {
 		enableInputs = false;
 	} else {
-		if (currentExercise.id) enableInputs = true;
+		if (currentExerciseTemplate.id) enableInputs = true;
 		else enableInputs = false;
 	}
 
-	function setState(newState: State) {
-		state = newState;
-
-		// Update UI
-		invalidateAll();
-	}
+	// ******************* API Calls *******************
 
 	async function saveExerciseTemplate() {
 		// Create new exercise template
-		if (currentExercise.id === null) {
-			const response = await createExerciseTemplateRequest(currentExercise);
+		if (currentExerciseTemplate.id === null) {
+			const response = await createExerciseTemplateRequest(currentExerciseTemplate);
 
 			if (response.success) {
 				console.log('ExerciseTemplates: Created exercise template successfully');
 
-				setState(State.VIEW);
+				state = { ...state, exerciseTemplate: exerciseTemplateState.VIEW };
+				invalidateAll();
 			} else if (response.validationErrors) {
 				triggerValidationErrorToasts(response.validationErrors);
 
@@ -69,12 +67,13 @@
 
 		// Update existing exercise template
 		else {
-			const response = await updateExerciseTemplateRequest(currentExercise);
+			const response = await updateExerciseTemplateRequest(currentExerciseTemplate);
 
 			if (response.success) {
 				console.log('ExerciseTemplates: Updated exercise template successfully');
 
-				setState(State.VIEW);
+				state = { ...state, exerciseTemplate: exerciseTemplateState.VIEW };
+				invalidateAll();
 			} else if (response.validationErrors) {
 				triggerValidationErrorToasts(response.validationErrors);
 
@@ -92,13 +91,14 @@
 	}
 
 	async function deleteExerciseTemplate() {
-		if (currentExercise.id) {
-			const response = await deleteExerciseTemplateRequest(currentExercise.id);
+		if (currentExerciseTemplate.id) {
+			const response = await deleteExerciseTemplateRequest(currentExerciseTemplate.id);
 
 			if (response.success) {
 				console.log(`ExerciseTemplates: Deleted exercise successfully!`);
 
-				setState(State.VIEW);
+				state = { ...state, exerciseTemplate: exerciseTemplateState.VIEW };
+				invalidateAll();
 			} else {
 				console.log(
 					`ExerciseTemplates: Something went wrong, couldn't delete exercise. Response: `,
@@ -130,8 +130,13 @@
 	<div class="h-10 w-full relative">
 		<button
 			on:click={() => {
-				if (state === State.EDIT) setState(State.VIEW);
-				else setExerciseTemplatesState(exerciseTemplatesStateType.CLOSE);
+				if (state.exerciseTemplate === exerciseTemplateState.EDIT) {
+					state = { ...state, exerciseTemplate: exerciseTemplateState.VIEW };
+					invalidateAll();
+				} else {
+					state = { ...state, exerciseTemplatesDrawer: exerciseTemplatesDrawerState.CLOSE };
+					invalidateAll();
+				}
 			}}
 			class="btn-icon absolute left-0 top-[-20px] w-10 h-10"
 			><svg
@@ -150,19 +155,21 @@
 			</svg></button
 		>
 
-		{#if state === State.VIEW}
+		{#if state.exerciseTemplate === exerciseTemplateState.VIEW}
 			<h3 class="h3 text-center">Exercises</h3>
 		{/if}
 	</div>
 
 	<!-- ? Content -->
 	<div class="flex flex-col">
-		{#if state === State.VIEW}
+		{#if state.exerciseTemplate === exerciseTemplateState.VIEW}
 			<!-- ? Create Exercise Template Button -->
 			<button
 				on:click={() => {
-					setState(State.EDIT);
-					currentExercise = {
+					state = { ...state, exerciseTemplate: exerciseTemplateState.EDIT };
+					invalidateAll();
+
+					currentExerciseTemplate = {
 						id: null,
 						title: '',
 						description: '',
@@ -178,13 +185,15 @@
 				{#each exerciseTemplates as exercise}
 					<button
 						on:click={() => {
-							setState(State.EDIT);
-							currentExercise = {
+							currentExerciseTemplate = {
 								id: exercise.id,
 								title: exercise.title,
 								description: exercise.description ? exercise.description : '',
 								userId: exercise.userId
 							};
+
+							state = { ...state, exerciseTemplate: exerciseTemplateState.EDIT };
+							invalidateAll();
 						}}
 						class="card card-hover w-full max-w-md h-auto rounded-lg py-3 px-6 flex flex-col text-center"
 					>
@@ -196,11 +205,11 @@
 					</button>
 				{/each}
 			</div>
-		{:else if state === State.EDIT}
+		{:else if state.exerciseTemplate === exerciseTemplateState.EDIT}
 			<div class="card w-full max-w-md rounded-lg py-10 px-6 flex flex-col text-center">
 				<div class="w-full">
 					<input
-						bind:value={currentExercise.title}
+						bind:value={currentExerciseTemplate.title}
 						class="h6 font-bold input h-9 mb-2 rounded-lg text-center variant-filled-surface"
 						type="text"
 						disabled={enableInputs}
@@ -209,22 +218,22 @@
 				</div>
 				<div>
 					<textarea
-						bind:value={currentExercise.description}
+						bind:value={currentExerciseTemplate.description}
 						class="py-2 px-3 textarea break-all variant-filled-surface w-full rounded-lg text-start"
 						disabled={enableInputs}
-						rows={Math.ceil(currentExercise.description.length / 30)}
+						rows={Math.ceil(currentExerciseTemplate.description.length / 30)}
 						placeholder="Description."
 					/>
 				</div>
 
-				{#if currentExercise.userId || currentExercise.id === null}
+				{#if currentExerciseTemplate.userId || currentExerciseTemplate.id === null}
 					<!-- ? Save Button -->
 					<button
 						on:click={saveExerciseTemplate}
 						class="variant-ghost-primary btn btn-sm mx-auto my-2 rounded-lg py-2 font-semibold uppercase tracking-wide"
 						>save</button
 					>
-					{#if currentExercise.id !== null}
+					{#if currentExerciseTemplate.id !== null}
 						<!-- ? Delete Button -->
 						<button
 							on:click={deleteExerciseTemplate}
