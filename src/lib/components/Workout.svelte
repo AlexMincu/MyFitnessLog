@@ -303,7 +303,7 @@
 					<div class="w-full relative">
 						<input
 							bind:value={exercise.title}
-							class="h6 input h-9 mb-2 rounded-lg text-center"
+							class="h6 input active:filter-none hover:filter-none h-9 mb-2 rounded-lg text-center"
 							type="text"
 							placeholder="Exercise"
 						/>
@@ -335,7 +335,7 @@
 						<!-- ? Exercise Options Popup -->
 						<div data-popup={`exerciseOptionsPopup-${exerciseIndex}`}>
 							<div
-								class="z-[999] card rounded-md align-center gap-3 justify-center flex flex-col py-2 px-5"
+								class=" card rounded-md align-center gap-3 justify-center flex flex-col py-2 px-5"
 							>
 								<div class=" text-center w-full">Options</div>
 								<button
@@ -360,7 +360,7 @@
 				{#if workoutState === workoutStateType.EDIT}
 					<textarea
 						bind:value={exercise.note}
-						class="textarea variant-filled-surface w-full rounded-lg p-1.5 text-center"
+						class="textarea active:filter-none hover:filter-none variant-filled-surface w-full rounded-lg p-1.5 text-center"
 						rows="1"
 						placeholder="SET X REPS @ LSRPE | REST"
 					/>
@@ -481,7 +481,7 @@
 								<input
 									bind:value={set.weight}
 									type="text"
-									class="input my-auto h-[80%] w-[80%] rounded-2xl text-center"
+									class="input active:filter-none hover:filter-none my-auto h-[80%] w-[80%] rounded-2xl text-center"
 								/>
 							{:else if workoutState === workoutStateType.VIEW}
 								<div
@@ -499,7 +499,7 @@
 									bind:value={set.reps}
 									type="text"
 									name="setReps"
-									class="input my-auto h-[80%] w-[80%] rounded-2xl text-center"
+									class="input active:filter-none hover:filter-none my-auto h-[80%] w-[80%] rounded-2xl text-center"
 								/>
 							{:else if workoutState === workoutStateType.VIEW}
 								<div

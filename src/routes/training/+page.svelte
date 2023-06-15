@@ -61,7 +61,7 @@
 				on:click={() => {
 					exerciseTemplatesState = exerciseTemplatesStateType.OPEN;
 				}}
-				class="variant-ghost-secondary btn mx-12 mb-2 rounded-lg py-2 font-semibold uppercase tracking-wide"
+				class="variant-ghost-secondary px-4 btn active:filter-none hover:filter-none duration-75 mx-12 mb-2 rounded-lg py-2 font-semibold uppercase tracking-wide"
 				>Exercise Templates</button
 			>
 
