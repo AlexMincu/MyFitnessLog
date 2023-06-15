@@ -24,11 +24,7 @@ async function updateWorkout(id: string, workout: Workout) {
 		});
 
 		workout.exercises.forEach(async (exercise: Exercise) => {
-			if (
-				exercise.exerciseTemplate &&
-				exercise.exerciseTemplate.id &&
-				exercise.exerciseTemplate.userId
-			) {
+			if (exercise.exerciseTemplate && exercise.exerciseTemplate.id) {
 				const exerciseTemplate = await db.exerciseTemplate.findUnique({
 					where: {
 						id: exercise.exerciseTemplate.id

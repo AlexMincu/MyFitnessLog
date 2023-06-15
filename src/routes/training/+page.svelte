@@ -32,8 +32,6 @@
 	function forceRefresh() {
 		currentWorkout = currentWorkout;
 	}
-
-	$: console.log(workoutTemplates);
 </script>
 
 <!-- ! Exercise Templates 'Drawer' -->
