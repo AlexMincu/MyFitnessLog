@@ -8,7 +8,7 @@ export type Workout = {
 };
 
 export type Exercise = {
-	title: string;
+	exerciseTemplate: ExerciseTemplate;
 	note: string;
 	sets: Set[];
 };

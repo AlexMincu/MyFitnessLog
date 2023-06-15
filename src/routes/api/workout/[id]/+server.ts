@@ -24,25 +24,51 @@ async function updateWorkout(id: string, workout: Workout) {
 		});
 
 		workout.exercises.forEach(async (exercise: Exercise) => {
-			const exerciseEntry = await db.exercise.create({
-				data: {
-					title: exercise.title,
-					note: exercise.note,
-					workoutId: id
-				}
-			});
-
-			exercise.sets.forEach(async (set: Set) => {
-				await db.set.create({
-					data: {
-						exerciseId: exerciseEntry.id,
-						orderNumber: Number(set.orderNumber),
-						type: set.type,
-						weight: Number(set.weight),
-						reps: Number(set.reps)
+			if (
+				exercise.exerciseTemplate &&
+				exercise.exerciseTemplate.id &&
+				exercise.exerciseTemplate.userId
+			) {
+				const exerciseTemplate = await db.exerciseTemplate.findUnique({
+					where: {
+						id: exercise.exerciseTemplate.id
 					}
 				});
-			});
+
+				if (exerciseTemplate) {
+					const exerciseEntry = await db.exercise.create({
+						data: {
+							note: exercise.note,
+							workoutId: id
+						}
+					});
+
+					await db.exercise.update({
+						where: {
+							id: exerciseEntry.id
+						},
+						data: {
+							exerciseTemplate: {
+								connect: {
+									id: exerciseTemplate.id
+								}
+							}
+						}
+					});
+
+					exercise.sets.forEach(async (set: Set) => {
+						await db.set.create({
+							data: {
+								exerciseId: exerciseEntry.id,
+								orderNumber: Number(set.orderNumber),
+								type: set.type,
+								weight: Number(set.weight),
+								reps: Number(set.reps)
+							}
+						});
+					});
+				}
+			}
 		});
 
 		return { updatedWorkout };

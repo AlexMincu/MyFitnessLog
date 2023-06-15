@@ -3,8 +3,12 @@
 
 	import { toastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 
-	import { exerciseTemplatesDrawerState, exerciseTemplateState } from '$lib/customTypes';
-	import type { ExerciseTemplate, State } from '$lib/customTypes';
+	import {
+		exerciseTemplatesDrawerState,
+		exerciseTemplateState,
+		trainingState
+	} from '$lib/customTypes';
+	import type { Exercise, ExerciseTemplate, State } from '$lib/customTypes';
 	import type { exerciseTemplate } from '@prisma/client';
 
 	import {
@@ -18,6 +22,9 @@
 	export let exerciseTemplates: exerciseTemplate[];
 
 	export let state: State;
+	export let selectedExercise: Exercise;
+
+	export let forceRefresh: Function;
 
 	let currentExerciseTemplate: ExerciseTemplate = {
 		id: null,
@@ -192,8 +199,16 @@
 								userId: exercise.userId
 							};
 
-							state = { ...state, exerciseTemplate: exerciseTemplateState.EDIT };
-							invalidateAll();
+							if (state.training === trainingState.VIEW_ALL) {
+								state = { ...state, exerciseTemplate: exerciseTemplateState.EDIT };
+								invalidateAll();
+							} else {
+								selectedExercise.exerciseTemplate = currentExerciseTemplate;
+
+								state = { ...state, exerciseTemplatesDrawer: exerciseTemplatesDrawerState.CLOSE };
+								invalidateAll();
+								forceRefresh();
+							}
 						}}
 						class="card card-hover w-full max-w-md h-auto rounded-lg py-3 px-6 flex flex-col text-center"
 					>

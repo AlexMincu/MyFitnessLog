@@ -4,8 +4,13 @@
 	import { popup, toastStore, type ToastSettings } from '@skeletonlabs/skeleton';
 	import type { PopupSettings } from '@skeletonlabs/skeleton';
 
-	import { workoutState, trainingState, SetType } from '$lib/customTypes';
-	import type { State, Workout, Exercise, Set } from '$lib/customTypes';
+	import {
+		workoutState,
+		trainingState,
+		SetType,
+		exerciseTemplatesDrawerState
+	} from '$lib/customTypes';
+	import type { State, Workout, Exercise, Set, ExerciseTemplate } from '$lib/customTypes';
 	import {
 		createWorkoutRequest,
 		deleteWorkoutRequest,
@@ -15,6 +20,7 @@
 	// ******************* Variables *******************
 	export let state: State;
 	export let workout: Workout;
+	export let selectedExercise: Exercise;
 
 	// ******************* Popups *******************
 	const optionsPopup: PopupSettings = {
@@ -76,7 +82,12 @@
 	// ******************* Function *******************
 	function addExercise() {
 		const exercise = {
-			title: '',
+			exerciseTemplate: {
+				id: null,
+				title: '',
+				description: '',
+				userId: null
+			},
 			note: '',
 			sets: []
 		};
@@ -293,16 +304,32 @@
 		<!-- ? Exercise container -->
 		<div class="flex w-full flex-col items-center justify-start">
 			<!-- ? Exercise Title -->
-			<!-- TODO - Exercise database select popup/modal -->
 			<div>
 				{#if state.workout === workoutState.EDIT}
 					<div class="w-full relative">
-						<input
-							bind:value={exercise.title}
-							class="h6 input active:filter-none hover:filter-none h-9 mb-2 rounded-lg text-center"
-							type="text"
-							placeholder="Exercise"
-						/>
+						<button
+							on:click={() => {
+								selectedExercise = exercise;
+
+								state = { ...state, exerciseTemplatesDrawer: exerciseTemplatesDrawerState.OPEN };
+								invalidateAll();
+							}}
+							class="h6 input btn min-w-[200px] max-w-[325px] active:filter-none hover:filter-none h-10 mb-2 rounded-lg text-center"
+						>
+							<div
+								class="w-full h-full break-all text-ellipsis overflow-hidden {exercise.exerciseTemplate
+									? exercise.exerciseTemplate.title
+										? ''
+										: 'text-orange-400'
+									: 'text-orange-400'}"
+							>
+								{exercise.exerciseTemplate
+									? exercise.exerciseTemplate.title
+										? exercise.exerciseTemplate.title
+										: 'Select Exercise'
+									: 'Select Exercise'}
+							</div>
+						</button>
 
 						<!-- ? Exercise Options Popup Button -->
 						<div
@@ -345,8 +372,18 @@
 						</div>
 					</div>
 				{:else if state.workout === workoutState.VIEW}
-					<div class="h6 mb-2 rounded-lg text-center {exercise.title ? '' : 'text-red-400'}">
-						{exercise.title ? exercise.title : 'Missing title!'}
+					<div
+						class="h6 mb-2 rounded-lg text-center {exercise.exerciseTemplate
+							? exercise.exerciseTemplate.title
+								? ''
+								: 'text-red-400'
+							: 'text-red-400'}"
+					>
+						{exercise.exerciseTemplate
+							? exercise.exerciseTemplate.title
+								? exercise.exerciseTemplate.title
+								: 'ERROR'
+							: 'ERROR'}
 					</div>
 				{/if}
 			</div>

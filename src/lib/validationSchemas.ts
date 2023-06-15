@@ -62,11 +62,6 @@ export const workoutTemplateSchema = z.object({
 
 // * Exercise
 export const exerciseSchema = z.object({
-	exerciseTitle: z
-		.string({ required_error: 'Exercise title is required' })
-		.min(1, { message: 'Exercise title is required' })
-		.max(30, { message: 'Exercise title is too long' })
-		.trim(),
 	exerciseNote: z.string().trim()
 });
 

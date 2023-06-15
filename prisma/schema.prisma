@@ -46,12 +46,13 @@ enum WorkoutType {
 }
 
 model exercise {
-  id        String  @id @default(uuid())
-  title     String
-  note      String?
-  sets      set[]
-  workout   workout @relation(fields: [workoutId], references: [id], onDelete: Cascade)
-  workoutId String
+  id                 String            @id @default(uuid())
+  exerciseTemplateId String?
+  exerciseTemplate   exerciseTemplate? @relation(fields: [exerciseTemplateId], references: [id])
+  note               String?
+  sets               set[]
+  workout            workout           @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  workoutId          String
 }
 
 model set {
@@ -66,9 +67,10 @@ model set {
 }
 
 model exerciseTemplate {
-  id          String  @id @default(uuid())
+  id          String     @id @default(uuid())
   title       String
   description String?
   userId      String?
-  user        user?   @relation(fields: [userId], references: [id])
+  user        user?      @relation(fields: [userId], references: [id])
+  exercise    exercise[]
 }

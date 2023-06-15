@@ -11,7 +11,7 @@
 		workoutState,
 		exerciseTemplateState
 	} from '$lib/customTypes';
-	import type { State, Workout as WorkoutType } from '$lib/customTypes';
+	import type { State, Workout as WorkoutType, Exercise } from '$lib/customTypes';
 
 	// ******************* Variables *******************
 
@@ -26,8 +26,14 @@
 	$: exerciseTemplates = $page.data.exerciseTemplates;
 
 	let currentWorkout: WorkoutType;
+	let selectedExercise: Exercise;
 
 	// ******************* Functions *******************
+	function forceRefresh() {
+		currentWorkout = currentWorkout;
+	}
+
+	$: console.log(workoutTemplates);
 </script>
 
 <!-- ! Exercise Templates 'Drawer' -->
@@ -38,7 +44,7 @@
 			? '-translate-x-full'
 			: ''}"
 	>
-		<ExerciseTemplates bind:state {exerciseTemplates} />
+		<ExerciseTemplates bind:state {exerciseTemplates} bind:selectedExercise {forceRefresh} />
 	</div>
 
 	<!-- ! VIEW_ALL STATE -->
@@ -88,7 +94,7 @@
 							{#each workout.exercises as exercise}
 								<li class="list-item">
 									{exercise.sets.length ? exercise.sets.length + ' x ' : ''}
-									{exercise.title}
+									{exercise.exerciseTemplate ? exercise.exerciseTemplate.title : 'ERROR'}
 								</li>
 							{/each}
 						</ul>
@@ -103,7 +109,7 @@
 		<div
 			class={state.exerciseTemplatesDrawer === exerciseTemplatesDrawerState.OPEN ? 'hidden' : ''}
 		>
-			<Workout bind:state bind:workout={currentWorkout} />
+			<Workout bind:state bind:workout={currentWorkout} bind:selectedExercise />
 		</div>
 	{/if}
 </div>

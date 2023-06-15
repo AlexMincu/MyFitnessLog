@@ -15,10 +15,15 @@ export function validateWorkout(workout: Workout) {
 		validationErrors = [...validationErrors, errors];
 	}
 
+	const errors = workout.exercises.find(
+		(exercise) => exercise.exerciseTemplate === null || exercise.exerciseTemplate.id === null
+	);
+	if (errors)
+		validationErrors = [...validationErrors, { exerciseTitle: ['Exercise must be selected'] }];
+
 	workout.exercises.forEach((exercise) => {
 		try {
 			exerciseSchema.parse({
-				exerciseTitle: exercise.title,
 				exerciseNote: exercise.note
 			});
 		} catch (err) {

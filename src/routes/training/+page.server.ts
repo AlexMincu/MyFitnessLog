@@ -21,6 +21,7 @@ async function getWorkouts(userId: string) {
 		include: {
 			exercises: {
 				include: {
+					exerciseTemplate: true,
 					sets: {
 						orderBy: {
 							orderNumber: 'asc'
