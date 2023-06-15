@@ -1,7 +1,7 @@
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 
 import { db } from '$lib/database';
-import type { Workout, Exercise, Set } from '$lib/services/customTypes';
+import type { Workout, Exercise, Set } from '$lib/customTypes';
 import { validateWorkout } from '$lib/services/workoutService';
 
 async function createWorkout(email: string, workout: Workout) {

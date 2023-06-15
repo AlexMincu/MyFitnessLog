@@ -36,3 +36,15 @@ export enum workoutStateType {
 	VIEW = 'VIEW',
 	EDIT = 'EDIT'
 }
+
+export type ExerciseTemplate = {
+	id: string | null;
+	title: string;
+	description: string;
+	userId: string | null;
+};
+
+export enum exerciseTemplatesStateType {
+	OPEN,
+	CLOSE
+}

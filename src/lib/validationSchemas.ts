@@ -81,3 +81,13 @@ export const setSchema = z.object({
 		invalid_type_error: 'Number of reps must be a number'
 	})
 });
+
+// * ExerciseTemplate
+
+export const exerciseTemplateSchema = z.object({
+	exerciseTemplateTitle: z
+		.string({ required_error: 'Exercise title is required' })
+		.min(1, { message: 'Exercise title is required' })
+		.max(35, { message: 'Exercise title is too long' })
+		.trim()
+});

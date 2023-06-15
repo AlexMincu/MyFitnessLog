@@ -11,20 +11,17 @@ datasource db {
 }
 
 model user {
-  id String @id @default(uuid())
-
-  firstName     String
-  lastName      String
-  email         String @unique
-  passwordHash  String
-  userAuthToken String @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  role Role @default(USER)
-
-  workouts workout[]
+  id                String             @id @default(uuid())
+  firstName         String
+  lastName          String
+  email             String             @unique
+  passwordHash      String
+  userAuthToken     String             @unique
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  role              Role               @default(USER)
+  workouts          workout[]
+  exerciseTemplates exerciseTemplate[]
 }
 
 enum Role {
@@ -33,13 +30,13 @@ enum Role {
 }
 
 model workout {
-  id        String     @id @default(uuid())
+  id        String      @id @default(uuid())
   type      WorkoutType @default(ENTRY)
   title     String
-  favorite  Boolean?   @default(false)
+  favorite  Boolean?    @default(false)
   note      String?
   exercises exercise[]
-  user      user?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      user?       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String?
 }
 
@@ -66,4 +63,12 @@ model set {
   checked     Boolean   @default(false)
   exercise    exercise? @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
   exerciseId  String?
+}
+
+model exerciseTemplate {
+  id          String  @id @default(uuid())
+  title       String
+  description String?
+  userId      String?
+  user        user?   @relation(fields: [userId], references: [id])
 }

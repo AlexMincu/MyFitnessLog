@@ -1,4 +1,4 @@
-import type { Workout } from '$lib/services/customTypes';
+import type { Workout } from '$lib/customTypes';
 import { exerciseSchema, setSchema, workoutTemplateSchema } from '$lib/validationSchemas';
 
 export function validateWorkout(workout: Workout) {

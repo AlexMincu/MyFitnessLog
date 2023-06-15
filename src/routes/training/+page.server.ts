@@ -36,17 +36,43 @@ async function getWorkouts(userId: string) {
 	return null;
 }
 
+async function getExerciseTemplates(userId: string) {
+	const exerciseTemplates = await db.exerciseTemplate.findMany({
+		where: {
+			OR: [{ userId }, { userId: null }]
+		}
+	});
+
+	if (exerciseTemplates) return exerciseTemplates;
+
+	return null;
+}
+
 export const load: PageServerLoad = async ({ locals }) => {
 	const userId = await getUserId(locals.user.email);
+	const returnArray = [];
 
 	if (userId) {
+		// * Workout Templates
 		const workouts = await getWorkouts(userId);
 
 		if (workouts) {
 			workouts.forEach((workout) => {
 				workout.userId = null;
 			});
-			return { workoutTemplates: workouts };
+			returnArray.push();
 		}
+
+		// * Exercise Templates
+		const exerciseTemplates = await getExerciseTemplates(userId);
+
+		// TODO
+		// if (exerciseTemplates) {
+		// 	exerciseTemplates.forEach((exercise) => {
+		// 		exercise.userId = null;
+		// 	});
+		// }
+
+		return { workoutTemplates: workouts, exerciseTemplates };
 	}
 };

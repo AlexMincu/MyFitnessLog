@@ -8,8 +8,8 @@
 		type Set,
 		workoutStateType,
 		trainingStateType
-	} from '$lib/services/customTypes';
-	import { SetType } from '$lib/services/customTypes';
+	} from '$lib/customTypes';
+	import { SetType } from '$lib/customTypes';
 	import {
 		createWorkoutRequest,
 		deleteWorkoutRequest,

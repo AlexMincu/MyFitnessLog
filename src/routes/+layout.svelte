@@ -14,13 +14,12 @@
 		drawerStore,
 		storePopup,
 		LightSwitch,
-		Toast
+		Toast,
+		Modal
 	} from '@skeletonlabs/skeleton';
 	import type { PopupSettings, DrawerSettings } from '@skeletonlabs/skeleton';
 	import { computePosition, autoUpdate, offset, shift, flip, arrow } from '@floating-ui/dom';
-
 	storePopup.set({ computePosition, autoUpdate, offset, shift, flip, arrow });
-
 	import Navigation from '$lib/components/Navigation.svelte';
 	import { page } from '$app/stores';
 
@@ -34,13 +33,13 @@
 		}
 	};
 
-	const drawerSettings: DrawerSettings = {
-		id: 'drawer',
+	const navigationDrawerSettings: DrawerSettings = {
+		id: 'navigation',
 		width: 'w-[65%]'
 	};
 
 	export function openDrawer() {
-		drawerStore.open(drawerSettings);
+		drawerStore.open(navigationDrawerSettings);
 	}
 
 	export function closeDrawer() {
@@ -48,20 +47,25 @@
 	}
 </script>
 
-<!-- Mobile Drawer -->
+<!-- ! Modal Component -->
+<Modal />
+
+<!-- ! Drawer Component -->
 <Drawer>
-	<h3 class="h3 mb-4 mt-8 w-auto text-center">Menu</h3>
-	<hr class="!border-t-2" />
-	<Navigation />
+	{#if $drawerStore.id === 'navigation'}
+		<h3 class="h3 mb-4 mt-8 w-auto text-center">Menu</h3>
+		<hr class="!border-t-2" />
+		<Navigation />
+	{/if}
 </Drawer>
 
-<!-- Toast -->
+<!-- ! Toast Component -->
 <Toast max={5} />
 
-<!-- App Shell -->
+<!-- ! App Shell -->
 <AppShell>
 	<svelte:fragment slot="header">
-		<!-- App Bar -->
+		<!-- ! App Bar Component -->
 		<AppBar
 			gridColumns="grid-cols-[auto_1fr_auto]"
 			slotLead="place-content-start"
