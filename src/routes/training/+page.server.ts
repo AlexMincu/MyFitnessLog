@@ -19,6 +19,9 @@ async function getWorkouts(userId: string, workoutsType: WorkoutType) {
 		where: {
 			AND: [{ userId }, { type: workoutsType }]
 		},
+		orderBy: {
+			createdAt: 'desc'
+		},
 		include: {
 			exercises: {
 				include: {

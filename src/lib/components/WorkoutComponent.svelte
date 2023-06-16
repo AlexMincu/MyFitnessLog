@@ -17,6 +17,7 @@
 		editWorkoutRequest
 	} from '$lib/services/workoutService';
 	import { WorkoutType } from '@prisma/client';
+	import ExerciseHistoryAccordion from './ExerciseHistoryAccordion.svelte';
 
 	// ******************* Variables *******************
 	export let state: State;
@@ -608,209 +609,214 @@
 		{/each}
 	{:else if state.workout === workoutState.ACTIVE && activeWorkout}
 		{#each activeWorkout.exercises as exercise, exerciseIndex}
-			<!-- ? Exercise container -->
-			<div class="flex w-full flex-col items-center justify-start">
-				<!-- ? Exercise Title -->
-				<div>
-					<div class="w-full relative">
-						<button
-							on:click={() => {
-								selectedExercise = exercise;
+			<!-- ? Exercise + Accordion container -->
+			<div class="w-full relative">
+				<!-- ? Exercise container -->
+				<div class="flex w-full flex-col items-center justify-start">
+					<!-- ? Exercise Title -->
+					<div>
+						<div class="w-full relative">
+							<button
+								on:click={() => {
+									selectedExercise = exercise;
 
-								state.exerciseTemplatesDrawer = exerciseTemplatesDrawerState.OPEN;
-								invalidateAll();
-							}}
-							class="h6 input btn min-w-[200px] max-w-[325px] active:filter-none hover:filter-none h-10 mb-2 rounded-lg text-center"
-						>
-							<div
-								class="w-full h-full break-all text-ellipsis overflow-hidden {exercise.exerciseTemplate
-									? exercise.exerciseTemplate.title
-										? ''
-										: 'text-orange-400'
-									: 'text-orange-400'}"
+									state.exerciseTemplatesDrawer = exerciseTemplatesDrawerState.OPEN;
+									invalidateAll();
+								}}
+								class="h6 input btn min-w-[200px] max-w-[325px] active:filter-none hover:filter-none h-10 mb-2 rounded-lg text-center"
 							>
-								{exercise.exerciseTemplate
-									? exercise.exerciseTemplate.title
+								<div
+									class="w-full h-full break-all text-ellipsis overflow-hidden {exercise.exerciseTemplate
 										? exercise.exerciseTemplate.title
-										: 'Select Exercise'
-									: 'Select Exercise'}
-							</div>
-						</button>
-
-						<!-- ? Exercise Options Popup Button -->
-						<div
-							use:popup={{
-								...exerciseOptionsPopup,
-								target: `exerciseOptionsPopup-${exerciseIndex}`
-							}}
-							class="btn-icon w-8 h-9 absolute right-[-35px] top-0"
-						>
-							<svg
-								fill="none"
-								stroke="currentColor"
-								stroke-width="1.5"
-								viewBox="0 0 24 24"
-								xmlns="http://www.w3.org/2000/svg"
-								aria-hidden="true"
-							>
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
-								/>
-							</svg>
-						</div>
-
-						<!-- ? Exercise Options Popup -->
-						<div data-popup={`exerciseOptionsPopup-${exerciseIndex}`}>
-							<div
-								class=" card rounded-md align-center gap-3 justify-center flex flex-col py-2 px-5"
-							>
-								<div class=" text-center w-full">Options</div>
-								<button
-									on:click={() => {
-										if (activeWorkout) removeExercise(exerciseIndex, activeWorkout);
-									}}
-									class="variant-ghost-error w-28 h-8 btn m-0 p-0.5 text-center uppercase"
-									>Delete</button
+											? ''
+											: 'text-orange-400'
+										: 'text-orange-400'}"
 								>
-							</div>
-						</div>
-					</div>
-				</div>
+									{exercise.exerciseTemplate
+										? exercise.exerciseTemplate.title
+											? exercise.exerciseTemplate.title
+											: 'Select Exercise'
+										: 'Select Exercise'}
+								</div>
+							</button>
 
-				<!-- ? Exercise Note -->
-				<div class="w-full">
-					<textarea
-						bind:value={exercise.note}
-						class="textarea active:filter-none hover:filter-none variant-filled-surface w-full rounded-lg p-1.5 text-center"
-						rows="1"
-						placeholder="SET X REPS @ LSRPE | REST"
-					/>
-				</div>
-
-				<!-- ? Sets container -->
-				<div class="flex flex-col w-full items-center">
-					<!-- ? Sets Header -->
-					<div
-						class="mb-1.5 grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
-					>
-						<div>Set</div>
-						<div>Weight</div>
-						<div>Reps</div>
-					</div>
-
-					<!-- ? Sets Rows -->
-					{#each exercise.sets as set, setIndex}
-						<!-- ? Set container -->
-						<div
-							class="grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
-						>
-							<!-- ? Set Options Column -->
-
+							<!-- ? Exercise Options Popup Button -->
 							<div
 								use:popup={{
-									...setTypePopup,
-									target: `setTypePopup-${exerciseIndex}-${setIndex}`
+									...exerciseOptionsPopup,
+									target: `exerciseOptionsPopup-${exerciseIndex}`
 								}}
-								class="cursor-pointer btn-icon {set.type === 'W'
-									? 'text-orange-400'
-									: ''} {set.type === 'D' ? 'text-red-400' : ''}"
+								class="btn-icon w-8 h-9 absolute right-[-35px] top-0"
 							>
-								{#if set.type === 'W'}
-									W
-								{:else if set.type === 'D'}
-									D
-								{:else}
-									{set.orderNumber}
-								{/if}
+								<svg
+									fill="none"
+									stroke="currentColor"
+									stroke-width="1.5"
+									viewBox="0 0 24 24"
+									xmlns="http://www.w3.org/2000/svg"
+									aria-hidden="true"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+									/>
+								</svg>
 							</div>
 
-							<!-- ? Set Popup -->
-							<div
-								data-popup={`setTypePopup-${exerciseIndex}-${setIndex}`}
-								class="rounded-lg card p-4 z-[888]"
-							>
-								<ul class="list flex flex-col gap-3 font-semibold tracking-wider">
-									<li class="flex flex-col xs:flex-row align-center justify-center">
-										<div class="w-14 text-sm text-center">Type</div>
-
-										<button
-											on:click={() => {
-												set.type = SetType.N;
-												updateSetsOrderNumber(exercise.sets);
-												forceRefresh();
-											}}
-											class=" variant-soft-secondary !m-1 btn btn-sm text-center uppercase w-22 h-7"
-											>Normal</button
-										>
-
-										<button
-											on:click={() => {
-												set.type = SetType.W;
-												updateSetsOrderNumber(exercise.sets);
-												forceRefresh();
-											}}
-											class="variant-soft-warning btn !m-1 btn-sm text-center uppercase w-22 h-7"
-											>Warmup</button
-										>
-
-										<button
-											on:click={() => {
-												set.type = SetType.D;
-												updateSetsOrderNumber(exercise.sets);
-												forceRefresh();
-											}}
-											class="variant-soft-error btn !m-1 btn-sm text-center uppercase w-22 h-7"
-											>DropSet</button
-										>
-									</li>
-									<li class="flex flex-row mr-auto">
-										<div class="w-14 text-sm text-start">Options</div>
-										<button
-											on:click={() => {
-												removeSet(setIndex, exercise);
-											}}
-											class="variant-ghost-error w-28 h-8 btn m-0 p-0.5 text-center uppercase"
-											>Delete Set</button
-										>
-									</li>
-									<li />
-								</ul>
-							</div>
-
-							<!-- ? Set Weight Column -->
-							<div class="w-full">
-								<input
-									bind:value={set.weight}
-									type="text"
-									class="input active:filter-none hover:filter-none my-auto h-[80%] w-[80%] rounded-2xl text-center"
-								/>
-							</div>
-
-							<!-- ? Set Reps Column -->
-							<div class="w-full">
-								<input
-									bind:value={set.reps}
-									type="text"
-									name="setReps"
-									class="input active:filter-none hover:filter-none my-auto h-[80%] w-[80%] rounded-2xl text-center"
-								/>
+							<!-- ? Exercise Options Popup -->
+							<div data-popup={`exerciseOptionsPopup-${exerciseIndex}`}>
+								<div
+									class=" card rounded-md align-center gap-3 justify-center flex flex-col py-2 px-5"
+								>
+									<div class=" text-center w-full">Options</div>
+									<button
+										on:click={() => {
+											if (activeWorkout) removeExercise(exerciseIndex, activeWorkout);
+										}}
+										class="variant-ghost-error w-28 h-8 btn m-0 p-0.5 text-center uppercase"
+										>Delete</button
+									>
+								</div>
 							</div>
 						</div>
-					{/each}
+					</div>
 
-					<!-- ? Add Set Button -->
+					<!-- ? Exercise Note -->
+					<div class="w-full">
+						<textarea
+							bind:value={exercise.note}
+							class="textarea active:filter-none hover:filter-none variant-filled-surface w-full rounded-lg p-1.5 text-center"
+							rows="1"
+							placeholder="SET X REPS @ LSRPE | REST"
+						/>
+					</div>
 
-					<button
-						on:click={() => {
-							addSet(exercise);
-						}}
-						type="button"
-						class="variant-ghost-primary btn mx-6 my-3 h-8 rounded-lg uppercase tracking-wide"
-						>add set</button
-					>
+					<!-- ? Sets container -->
+					<div class="flex flex-col w-full items-center">
+						<!-- ? Sets Header -->
+						<div
+							class="mb-1.5 grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
+						>
+							<div>Set</div>
+							<div>Weight</div>
+							<div>Reps</div>
+						</div>
+
+						<!-- ? Sets Rows -->
+						{#each exercise.sets as set, setIndex}
+							<!-- ? Set container -->
+							<div
+								class="grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
+							>
+								<!-- ? Set Options Column -->
+
+								<div
+									use:popup={{
+										...setTypePopup,
+										target: `setTypePopup-${exerciseIndex}-${setIndex}`
+									}}
+									class="cursor-pointer btn-icon {set.type === 'W'
+										? 'text-orange-400'
+										: ''} {set.type === 'D' ? 'text-red-400' : ''}"
+								>
+									{#if set.type === 'W'}
+										W
+									{:else if set.type === 'D'}
+										D
+									{:else}
+										{set.orderNumber}
+									{/if}
+								</div>
+
+								<!-- ? Set Popup -->
+								<div
+									data-popup={`setTypePopup-${exerciseIndex}-${setIndex}`}
+									class="rounded-lg card p-4 z-[888]"
+								>
+									<ul class="list flex flex-col gap-3 font-semibold tracking-wider">
+										<li class="flex flex-col xs:flex-row align-center justify-center">
+											<div class="w-14 text-sm text-center">Type</div>
+
+											<button
+												on:click={() => {
+													set.type = SetType.N;
+													updateSetsOrderNumber(exercise.sets);
+													forceRefresh();
+												}}
+												class=" variant-soft-secondary !m-1 btn btn-sm text-center uppercase w-22 h-7"
+												>Normal</button
+											>
+
+											<button
+												on:click={() => {
+													set.type = SetType.W;
+													updateSetsOrderNumber(exercise.sets);
+													forceRefresh();
+												}}
+												class="variant-soft-warning btn !m-1 btn-sm text-center uppercase w-22 h-7"
+												>Warmup</button
+											>
+
+											<button
+												on:click={() => {
+													set.type = SetType.D;
+													updateSetsOrderNumber(exercise.sets);
+													forceRefresh();
+												}}
+												class="variant-soft-error btn !m-1 btn-sm text-center uppercase w-22 h-7"
+												>DropSet</button
+											>
+										</li>
+										<li class="flex flex-row mr-auto">
+											<div class="w-14 text-sm text-start">Options</div>
+											<button
+												on:click={() => {
+													removeSet(setIndex, exercise);
+												}}
+												class="variant-ghost-error w-28 h-8 btn m-0 p-0.5 text-center uppercase"
+												>Delete Set</button
+											>
+										</li>
+										<li />
+									</ul>
+								</div>
+
+								<!-- ? Set Weight Column -->
+								<div class="w-full">
+									<input
+										bind:value={set.weight}
+										type="text"
+										class="input active:filter-none hover:filter-none my-auto h-[80%] w-[80%] rounded-2xl text-center"
+									/>
+								</div>
+
+								<!-- ? Set Reps Column -->
+								<div class="w-full">
+									<input
+										bind:value={set.reps}
+										type="text"
+										name="setReps"
+										class="input active:filter-none hover:filter-none my-auto h-[80%] w-[80%] rounded-2xl text-center"
+									/>
+								</div>
+							</div>
+						{/each}
+
+						<!-- ? Add Set Button -->
+
+						<button
+							on:click={() => {
+								addSet(exercise);
+							}}
+							type="button"
+							class="variant-ghost-primary btn mx-6 my-3 h-8 rounded-lg uppercase tracking-wide"
+							>add set</button
+						>
+					</div>
 				</div>
+				<!-- ? Exercise History Accordion -->
+				<ExerciseHistoryAccordion exerciseTemplateId={exercise.exerciseTemplate.id} />
 			</div>
 		{/each}
 	{/if}

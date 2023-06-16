@@ -81,7 +81,6 @@ async function deleteWorkout(id: string) {
 			}
 		});
 
-		console.log(deletedWorkout);
 		return { deletedWorkout };
 	} catch (err) {
 		return { error: err.message };
