@@ -10,7 +10,7 @@
 		SetType,
 		exerciseTemplatesDrawerState
 	} from '$lib/customTypes';
-	import type { State, Workout, Exercise, Set, ExerciseTemplate } from '$lib/customTypes';
+	import type { State, Workout, Exercise, Set } from '$lib/customTypes';
 	import {
 		createWorkoutRequest,
 		deleteWorkoutRequest,
@@ -23,7 +23,7 @@
 	export let currentWorkout: Workout;
 	export let selectedExercise: Exercise;
 	export let activeWorkout: Workout | null;
-	export let forceRefresh: Function;
+	export let forceRefresh: () => void;
 
 	// ******************* Popups *******************
 	const optionsPopup: PopupSettings = {
@@ -51,39 +51,47 @@
 		timeout: 2500
 	};
 
+	// eslint-disable-next-line
 	function triggerValidationErrorToasts(validationErrors: any[]) {
-		validationErrors.forEach((errorObject) => {
-			const { workoutTitle, exerciseTitle, setWeight, setReps } = errorObject;
+		validationErrors.forEach(
+			(errorObject: {
+				workoutTitle: string[];
+				exerciseTitle: string[];
+				setWeight: string[];
+				setReps: string[];
+			}) => {
+				const { workoutTitle, exerciseTitle, setWeight, setReps } = errorObject;
 
-			if (workoutTitle) {
-				toastStore.trigger({
-					...validationErrorToastSetting,
-					message: `${workoutTitle[0]}`
-				});
+				if (workoutTitle) {
+					toastStore.trigger({
+						...validationErrorToastSetting,
+						message: `${workoutTitle[0]}`
+					});
+				}
+				if (exerciseTitle) {
+					toastStore.trigger({
+						...validationErrorToastSetting,
+						message: `${exerciseTitle[0]}`
+					});
+				}
+				if (setWeight) {
+					toastStore.trigger({
+						...validationErrorToastSetting,
+						message: `${setWeight[0]}`
+					});
+				}
+				if (setReps) {
+					toastStore.trigger({
+						...validationErrorToastSetting,
+						message: `${setReps[0]}`
+					});
+				}
 			}
-			if (exerciseTitle) {
-				toastStore.trigger({
-					...validationErrorToastSetting,
-					message: `${exerciseTitle[0]}`
-				});
-			}
-			if (setWeight) {
-				toastStore.trigger({
-					...validationErrorToastSetting,
-					message: `${setWeight[0]}`
-				});
-			}
-			if (setReps) {
-				toastStore.trigger({
-					...validationErrorToastSetting,
-					message: `${setReps[0]}`
-				});
-			}
-		});
+		);
 	}
 
 	// ******************* Function *******************
-	function addExercise() {
+	function addExercise(workout: Workout) {
 		const exercise = {
 			exerciseTemplate: {
 				id: null,
@@ -96,13 +104,15 @@
 		};
 		addSet(exercise);
 
-		currentWorkout.exercises = [...currentWorkout.exercises, exercise];
+		workout.exercises = [...workout.exercises, exercise];
+
+		forceRefresh();
 	}
 
-	function removeExercise(exerciseIndex: number) {
-		currentWorkout.exercises.splice(exerciseIndex, 1);
+	function removeExercise(exerciseIndex: number, workout: Workout) {
+		workout.exercises.splice(exerciseIndex, 1);
 
-		currentWorkout = currentWorkout;
+		forceRefresh();
 	}
 
 	function addSet(exercise: Exercise) {
@@ -116,13 +126,15 @@
 			}
 		];
 
-		updateExerciseUI(exercise);
+		updateSetsOrderNumber(exercise.sets);
+		forceRefresh();
 	}
 
 	function removeSet(setIndex: number, exercise: Exercise) {
 		exercise.sets.splice(setIndex, 1);
 
-		updateExerciseUI(exercise);
+		updateSetsOrderNumber(exercise.sets);
+		forceRefresh();
 	}
 
 	function updateSetsOrderNumber(sets: Set[]) {
@@ -134,11 +146,6 @@
 		});
 
 		sets.sort((a, b) => a.orderNumber - b.orderNumber);
-	}
-
-	function updateExerciseUI(exercise: Exercise) {
-		updateSetsOrderNumber(exercise.sets);
-		currentWorkout = currentWorkout;
 	}
 
 	// ******************* Async function -> fetch *******************
@@ -291,9 +298,16 @@
 
 	<!-- ? Workout Title -->
 	<div>
-		{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
+		{#if state.workout === workoutState.EDIT}
 			<input
 				bind:value={currentWorkout.title}
+				class="h4 input rounded-lg text-center"
+				type="text"
+				placeholder="Workout Title"
+			/>
+		{:else if state.workout === workoutState.ACTIVE && activeWorkout}
+			<input
+				bind:value={activeWorkout.title}
 				class="h4 input rounded-lg text-center"
 				type="text"
 				placeholder="Workout Title"
@@ -307,9 +321,16 @@
 
 	<!-- ? Workout Note -->
 	<div class="w-[90%]">
-		{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
+		{#if state.workout === workoutState.EDIT}
 			<textarea
 				bind:value={currentWorkout.note}
+				class="textarea rounded-lg"
+				rows="2"
+				placeholder="Workout notes."
+			/>
+		{:else if state.workout === workoutState.ACTIVE && activeWorkout}
+			<textarea
+				bind:value={activeWorkout.note}
 				class="textarea rounded-lg"
 				rows="2"
 				placeholder="Workout notes."
@@ -322,12 +343,275 @@
 	</div>
 
 	<!-- ? Exercises -->
-	{#each currentWorkout.exercises as exercise, exerciseIndex}
-		<!-- ? Exercise container -->
-		<div class="flex w-full flex-col items-center justify-start">
-			<!-- ? Exercise Title -->
-			<div>
-				{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
+	{#if state.workout !== workoutState.ACTIVE}
+		{#each currentWorkout.exercises as exercise, exerciseIndex}
+			<!-- ? Exercise container -->
+			<div class="flex w-full flex-col items-center justify-start">
+				<!-- ? Exercise Title -->
+				<div>
+					{#if state.workout === workoutState.EDIT}
+						<div class="w-full relative">
+							<button
+								on:click={() => {
+									selectedExercise = exercise;
+
+									state.exerciseTemplatesDrawer = exerciseTemplatesDrawerState.OPEN;
+									invalidateAll();
+								}}
+								class="h6 input btn min-w-[200px] max-w-[325px] active:filter-none hover:filter-none h-10 mb-2 rounded-lg text-center"
+							>
+								<div
+									class="w-full h-full break-all text-ellipsis overflow-hidden {exercise.exerciseTemplate
+										? exercise.exerciseTemplate.title
+											? ''
+											: 'text-orange-400'
+										: 'text-orange-400'}"
+								>
+									{exercise.exerciseTemplate
+										? exercise.exerciseTemplate.title
+											? exercise.exerciseTemplate.title
+											: 'Select Exercise'
+										: 'Select Exercise'}
+								</div>
+							</button>
+
+							<!-- ? Exercise Options Popup Button -->
+							<div
+								use:popup={{
+									...exerciseOptionsPopup,
+									target: `exerciseOptionsPopup-${exerciseIndex}`
+								}}
+								class="btn-icon w-8 h-9 absolute right-[-35px] top-0"
+							>
+								<svg
+									fill="none"
+									stroke="currentColor"
+									stroke-width="1.5"
+									viewBox="0 0 24 24"
+									xmlns="http://www.w3.org/2000/svg"
+									aria-hidden="true"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z"
+									/>
+								</svg>
+							</div>
+
+							<!-- ? Exercise Options Popup -->
+							<div data-popup={`exerciseOptionsPopup-${exerciseIndex}`}>
+								<div
+									class=" card rounded-md align-center gap-3 justify-center flex flex-col py-2 px-5"
+								>
+									<div class=" text-center w-full">Options</div>
+									<button
+										on:click={() => {
+											removeExercise(exerciseIndex, currentWorkout);
+										}}
+										class="variant-ghost-error w-28 h-8 btn m-0 p-0.5 text-center uppercase"
+										>Delete</button
+									>
+								</div>
+							</div>
+						</div>
+					{:else if state.workout === workoutState.VIEW}
+						<div
+							class="h6 mb-2 rounded-lg text-center {exercise.exerciseTemplate
+								? exercise.exerciseTemplate.title
+									? ''
+									: 'text-red-400'
+								: 'text-red-400'}"
+						>
+							{exercise.exerciseTemplate
+								? exercise.exerciseTemplate.title
+									? exercise.exerciseTemplate.title
+									: 'ERROR'
+								: 'ERROR'}
+						</div>
+					{/if}
+				</div>
+
+				<!-- ? Exercise Note -->
+				<div class="w-full">
+					{#if state.workout === workoutState.EDIT}
+						<textarea
+							bind:value={exercise.note}
+							class="textarea active:filter-none hover:filter-none variant-filled-surface w-full rounded-lg p-1.5 text-center"
+							rows="1"
+							placeholder="SET X REPS @ LSRPE | REST"
+						/>
+					{:else if state.workout === workoutState.VIEW}
+						<div
+							class="textarea line mb-3 h-10 w-full overflow-hidden break-words rounded-lg p-2 text-center leading-6"
+						>
+							{exercise.note}
+						</div>
+					{/if}
+				</div>
+
+				<!-- ? Sets container -->
+				<div class="flex flex-col w-full items-center">
+					<!-- ? Sets Header -->
+					<div
+						class="mb-1.5 grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
+					>
+						<div>Set</div>
+						<div>Weight</div>
+						<div>Reps</div>
+					</div>
+
+					<!-- ? Sets Rows -->
+					{#each exercise.sets as set, setIndex}
+						<!-- ? Set container -->
+						<div
+							class="grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
+						>
+							<!-- ? Set Options Column -->
+							{#if state.workout === workoutState.EDIT}
+								<div
+									use:popup={{
+										...setTypePopup,
+										target: `setTypePopup-${exerciseIndex}-${setIndex}`
+									}}
+									class="cursor-pointer btn-icon {set.type === 'W'
+										? 'text-orange-400'
+										: ''} {set.type === 'D' ? 'text-red-400' : ''}"
+								>
+									{#if set.type === 'W'}
+										W
+									{:else if set.type === 'D'}
+										D
+									{:else}
+										{set.orderNumber}
+									{/if}
+								</div>
+
+								<!-- ? Set Popup -->
+								<div
+									data-popup={`setTypePopup-${exerciseIndex}-${setIndex}`}
+									class="rounded-lg card p-4 z-[888]"
+								>
+									<ul class="list flex flex-col gap-3 font-semibold tracking-wider">
+										<li class="flex flex-col xs:flex-row align-center justify-center">
+											<div class="w-14 text-sm text-center">Type</div>
+
+											<button
+												on:click={() => {
+													set.type = SetType.N;
+													updateSetsOrderNumber(exercise.sets);
+													forceRefresh();
+												}}
+												class=" variant-soft-secondary !m-1 btn btn-sm text-center uppercase w-22 h-7"
+												>Normal</button
+											>
+
+											<button
+												on:click={() => {
+													set.type = SetType.W;
+													updateSetsOrderNumber(exercise.sets);
+													forceRefresh();
+												}}
+												class="variant-soft-warning btn !m-1 btn-sm text-center uppercase w-22 h-7"
+												>Warmup</button
+											>
+
+											<button
+												on:click={() => {
+													set.type = SetType.D;
+													updateSetsOrderNumber(exercise.sets);
+													forceRefresh();
+												}}
+												class="variant-soft-error btn !m-1 btn-sm text-center uppercase w-22 h-7"
+												>DropSet</button
+											>
+										</li>
+										<li class="flex flex-row mr-auto">
+											<div class="w-14 text-sm text-start">Options</div>
+											<button
+												on:click={() => {
+													removeSet(setIndex, exercise);
+												}}
+												class="variant-ghost-error w-28 h-8 btn m-0 p-0.5 text-center uppercase"
+												>Delete Set</button
+											>
+										</li>
+										<li />
+									</ul>
+								</div>
+							{:else if state.workout === workoutState.VIEW}
+								<div
+									class="btn-icon cursor-default !bg-transparent {set.type === 'W'
+										? 'text-orange-400'
+										: ''} {set.type === 'D' ? 'text-red-400' : ''}"
+								>
+									{#if set.type === 'W'}
+										W
+									{:else if set.type === 'D'}
+										D
+									{:else}
+										{set.orderNumber}
+									{/if}
+								</div>
+							{/if}
+
+							<!-- ? Set Weight Column -->
+							<div class="w-full">
+								{#if state.workout === workoutState.EDIT}
+									<input
+										bind:value={set.weight}
+										type="text"
+										class="input active:filter-none hover:filter-none my-auto h-[80%] w-[80%] rounded-2xl text-center"
+									/>
+								{:else if state.workout === workoutState.VIEW}
+									<div
+										class="input m-auto flex h-[80%] w-[80%] items-center justify-center rounded-2xl"
+									>
+										{set.weight ? set.weight : 0}
+									</div>
+								{/if}
+							</div>
+
+							<!-- ? Set Reps Column -->
+							<div class="w-full">
+								{#if state.workout === workoutState.EDIT}
+									<input
+										bind:value={set.reps}
+										type="text"
+										name="setReps"
+										class="input active:filter-none hover:filter-none my-auto h-[80%] w-[80%] rounded-2xl text-center"
+									/>
+								{:else if state.workout === workoutState.VIEW}
+									<div
+										class="input m-auto flex h-[80%] w-[80%] items-center justify-center rounded-2xl"
+									>
+										{set.reps ? set.reps : 0}
+									</div>
+								{/if}
+							</div>
+						</div>
+					{/each}
+
+					<!-- ? Add Set Button -->
+					{#if state.workout === workoutState.EDIT}
+						<button
+							on:click={() => {
+								addSet(exercise);
+							}}
+							type="button"
+							class="variant-ghost-primary btn mx-6 my-3 h-8 rounded-lg uppercase tracking-wide"
+							>add set</button
+						>
+					{/if}
+				</div>
+			</div>
+		{/each}
+	{:else if state.workout === workoutState.ACTIVE && activeWorkout}
+		{#each activeWorkout.exercises as exercise, exerciseIndex}
+			<!-- ? Exercise container -->
+			<div class="flex w-full flex-col items-center justify-start">
+				<!-- ? Exercise Title -->
+				<div>
 					<div class="w-full relative">
 						<button
 							on:click={() => {
@@ -385,7 +669,7 @@
 								<div class=" text-center w-full">Options</div>
 								<button
 									on:click={() => {
-										removeExercise(exerciseIndex);
+										if (activeWorkout) removeExercise(exerciseIndex, activeWorkout);
 									}}
 									class="variant-ghost-error w-28 h-8 btn m-0 p-0.5 text-center uppercase"
 									>Delete</button
@@ -393,60 +677,37 @@
 							</div>
 						</div>
 					</div>
-				{:else if state.workout === workoutState.VIEW}
-					<div
-						class="h6 mb-2 rounded-lg text-center {exercise.exerciseTemplate
-							? exercise.exerciseTemplate.title
-								? ''
-								: 'text-red-400'
-							: 'text-red-400'}"
-					>
-						{exercise.exerciseTemplate
-							? exercise.exerciseTemplate.title
-								? exercise.exerciseTemplate.title
-								: 'ERROR'
-							: 'ERROR'}
-					</div>
-				{/if}
-			</div>
+				</div>
 
-			<!-- ? Exercise Note -->
-			<div class="w-full">
-				{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
+				<!-- ? Exercise Note -->
+				<div class="w-full">
 					<textarea
 						bind:value={exercise.note}
 						class="textarea active:filter-none hover:filter-none variant-filled-surface w-full rounded-lg p-1.5 text-center"
 						rows="1"
 						placeholder="SET X REPS @ LSRPE | REST"
 					/>
-				{:else if state.workout === workoutState.VIEW}
-					<div
-						class="textarea line mb-3 h-10 w-full overflow-hidden break-words rounded-lg p-2 text-center leading-6"
-					>
-						{exercise.note}
-					</div>
-				{/if}
-			</div>
-
-			<!-- ? Sets container -->
-			<div class="flex flex-col w-full items-center">
-				<!-- ? Sets Header -->
-				<div
-					class="mb-1.5 grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
-				>
-					<div>Set</div>
-					<div>Weight</div>
-					<div>Reps</div>
 				</div>
 
-				<!-- ? Sets Rows -->
-				{#each exercise.sets as set, setIndex}
-					<!-- ? Set container -->
+				<!-- ? Sets container -->
+				<div class="flex flex-col w-full items-center">
+					<!-- ? Sets Header -->
 					<div
-						class="grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
+						class="mb-1.5 grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
 					>
-						<!-- ? Set Options Column -->
-						{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
+						<div>Set</div>
+						<div>Weight</div>
+						<div>Reps</div>
+					</div>
+
+					<!-- ? Sets Rows -->
+					{#each exercise.sets as set, setIndex}
+						<!-- ? Set container -->
+						<div
+							class="grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
+						>
+							<!-- ? Set Options Column -->
+
 							<div
 								use:popup={{
 									...setTypePopup,
@@ -477,7 +738,8 @@
 										<button
 											on:click={() => {
 												set.type = SetType.N;
-												updateExerciseUI(exercise);
+												updateSetsOrderNumber(exercise.sets);
+												forceRefresh();
 											}}
 											class=" variant-soft-secondary !m-1 btn btn-sm text-center uppercase w-22 h-7"
 											>Normal</button
@@ -486,7 +748,8 @@
 										<button
 											on:click={() => {
 												set.type = SetType.W;
-												updateExerciseUI(exercise);
+												updateSetsOrderNumber(exercise.sets);
+												forceRefresh();
 											}}
 											class="variant-soft-warning btn !m-1 btn-sm text-center uppercase w-22 h-7"
 											>Warmup</button
@@ -495,7 +758,8 @@
 										<button
 											on:click={() => {
 												set.type = SetType.D;
-												updateExerciseUI(exercise);
+												updateSetsOrderNumber(exercise.sets);
+												forceRefresh();
 											}}
 											class="variant-soft-error btn !m-1 btn-sm text-center uppercase w-22 h-7"
 											>DropSet</button
@@ -514,61 +778,30 @@
 									<li />
 								</ul>
 							</div>
-						{:else if state.workout === workoutState.VIEW}
-							<div
-								class="btn-icon cursor-default !bg-transparent {set.type === 'W'
-									? 'text-orange-400'
-									: ''} {set.type === 'D' ? 'text-red-400' : ''}"
-							>
-								{#if set.type === 'W'}
-									W
-								{:else if set.type === 'D'}
-									D
-								{:else}
-									{set.orderNumber}
-								{/if}
-							</div>
-						{/if}
 
-						<!-- ? Set Weight Column -->
-						<div class="w-full">
-							{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
+							<!-- ? Set Weight Column -->
+							<div class="w-full">
 								<input
 									bind:value={set.weight}
 									type="text"
 									class="input active:filter-none hover:filter-none my-auto h-[80%] w-[80%] rounded-2xl text-center"
 								/>
-							{:else if state.workout === workoutState.VIEW}
-								<div
-									class="input m-auto flex h-[80%] w-[80%] items-center justify-center rounded-2xl"
-								>
-									{set.weight ? set.weight : 0}
-								</div>
-							{/if}
-						</div>
+							</div>
 
-						<!-- ? Set Reps Column -->
-						<div class="w-full">
-							{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
+							<!-- ? Set Reps Column -->
+							<div class="w-full">
 								<input
 									bind:value={set.reps}
 									type="text"
 									name="setReps"
 									class="input active:filter-none hover:filter-none my-auto h-[80%] w-[80%] rounded-2xl text-center"
 								/>
-							{:else if state.workout === workoutState.VIEW}
-								<div
-									class="input m-auto flex h-[80%] w-[80%] items-center justify-center rounded-2xl"
-								>
-									{set.reps ? set.reps : 0}
-								</div>
-							{/if}
+							</div>
 						</div>
-					</div>
-				{/each}
+					{/each}
 
-				<!-- ? Add Set Button -->
-				{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
+					<!-- ? Add Set Button -->
+
 					<button
 						on:click={() => {
 							addSet(exercise);
@@ -577,15 +810,21 @@
 						class="variant-ghost-primary btn mx-6 my-3 h-8 rounded-lg uppercase tracking-wide"
 						>add set</button
 					>
-				{/if}
+				</div>
 			</div>
-		</div>
-	{/each}
+		{/each}
+	{/if}
 
 	<!-- ? Add Exercise Button -->
 	{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
 		<button
-			on:click={addExercise}
+			on:click={() => {
+				if (state.workout === workoutState.EDIT) {
+					addExercise(currentWorkout);
+				} else if (state.workout === workoutState.ACTIVE) {
+					if (activeWorkout) addExercise(activeWorkout);
+				}
+			}}
 			type="button"
 			class="variant-ghost-primary btn mx-6 h-8 rounded-lg uppercase tracking-wide"
 			>add exercise</button

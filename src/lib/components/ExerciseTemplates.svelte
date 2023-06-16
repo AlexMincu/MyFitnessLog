@@ -24,7 +24,7 @@
 	export let state: State;
 	export let selectedExercise: Exercise;
 
-	export let forceRefresh: Function;
+	export let forceRefresh: () => void;
 
 	let currentExerciseTemplate: ExerciseTemplate = {
 		id: null,
@@ -125,7 +125,7 @@
 		timeout: 2500
 	};
 
-	function triggerValidationErrorToasts(validationErrors: { exerciseTemplateTitle: any[] }) {
+	function triggerValidationErrorToasts(validationErrors: { exerciseTemplateTitle: string[] }) {
 		if (validationErrors.exerciseTemplateTitle) {
 			toastStore.trigger({
 				...validationErrorToastSetting,
@@ -135,7 +135,7 @@
 	}
 </script>
 
-<div class="w-[90%] h-fit py-8 mx-auto">
+<div class="w-[90%] h-fit py-3 pb-8 mx-auto">
 	<!-- ? Header -->
 	<div class="h-10 w-full relative">
 		<button
@@ -148,7 +148,7 @@
 					invalidateAll();
 				}
 			}}
-			class="btn-icon absolute left-0 top-[-20px] w-10 h-10"
+			class="btn-icon absolute left-0 top-[-5px] w-10 h-10"
 			><svg
 				fill="none"
 				stroke="currentColor"

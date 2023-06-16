@@ -1,6 +1,6 @@
 import { db } from '$lib/database';
 import { fail, redirect } from '@sveltejs/kit';
-import type { Actions, PageServerLoad } from './$types';
+import type { Actions } from './$types';
 import bcrypt from 'bcrypt';
 import { Role } from '@prisma/client';
 
@@ -9,11 +9,12 @@ import { registerSchema } from '$lib/validationSchemas';
 export const actions: Actions = {
 	register: async ({ request }) => {
 		const formData = Object.fromEntries(await request.formData());
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		const { password, passwordConfirm, ...restData } = formData;
 
 		// Validation
 		try {
-			const result = registerSchema.parse(formData);
+			registerSchema.parse(formData);
 		} catch (err) {
 			const { fieldErrors: errors } = err.flatten();
 

@@ -47,19 +47,24 @@ export type ExerciseTemplate = {
 	userId: string | null;
 };
 
-export enum exerciseTemplatesDrawerState {
-	OPEN,
-	CLOSE
-}
-
 export enum exerciseTemplateState {
 	VIEW,
 	EDIT
 }
 
+export enum exerciseTemplatesDrawerState {
+	OPEN,
+	CLOSE
+}
+export enum workoutsHistoryDrawerState {
+	OPEN,
+	CLOSE
+}
+
 export interface State {
 	training: trainingState;
 	workout: workoutState;
-	exerciseTemplatesDrawer: exerciseTemplatesDrawerState;
 	exerciseTemplate: exerciseTemplateState;
+	exerciseTemplatesDrawer: exerciseTemplatesDrawerState;
+	workoutsHistoryDrawer: workoutsHistoryDrawerState;
 }

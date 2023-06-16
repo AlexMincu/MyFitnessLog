@@ -4,12 +4,14 @@
 
 	import ExerciseTemplates from '$lib/components/ExerciseTemplates.svelte';
 	import WorkoutComponent from '$lib/components/WorkoutComponent.svelte';
+	import WorkoutsHistory from '$lib/components/WorkoutsHistory.svelte';
 
 	import {
 		exerciseTemplatesDrawerState,
 		trainingState,
 		workoutState,
-		exerciseTemplateState
+		exerciseTemplateState,
+		workoutsHistoryDrawerState
 	} from '$lib/customTypes';
 	import type { State, Workout, Exercise } from '$lib/customTypes';
 	import { WorkoutType } from '@prisma/client';
@@ -19,8 +21,9 @@
 	let state: State = {
 		training: trainingState.VIEW_ALL,
 		workout: workoutState.VIEW,
+		exerciseTemplate: exerciseTemplateState.VIEW,
 		exerciseTemplatesDrawer: exerciseTemplatesDrawerState.CLOSE,
-		exerciseTemplate: exerciseTemplateState.VIEW
+		workoutsHistoryDrawer: workoutsHistoryDrawerState.CLOSE
 	};
 
 	$: workoutTemplates = $page.data.workoutTemplates;
@@ -53,15 +56,25 @@
 	</div>
 {/if}
 
-<!-- ! Exercise Templates 'Drawer' -->
 <div class="w-full h-full relative">
+	<!-- ! Exercise Templates 'Drawer' -->
 	<div
-		class="transition-all bg-surface-100-800-token w-full h-full overflow-y-scroll overflow-x-hidden absolute left-0 top-0 {state.exerciseTemplatesDrawer ===
+		class="transition-all bg-surface-200-700-token w-full h-full overflow-y-scroll overflow-x-hidden absolute left-0 top-0 {state.exerciseTemplatesDrawer ===
 		exerciseTemplatesDrawerState.CLOSE
 			? '-translate-x-full'
 			: ''}"
 	>
 		<ExerciseTemplates bind:state {exerciseTemplates} bind:selectedExercise {forceRefresh} />
+	</div>
+
+	<!-- ! Workouts History 'Drawer' -->
+	<div
+		class="transition-all bg-surface-200-700-token w-full h-full overflow-y-scroll overflow-x-hidden absolute left-0 top-0 {state.workoutsHistoryDrawer ===
+		workoutsHistoryDrawerState.CLOSE
+			? 'translate-x-full'
+			: ''}"
+	>
+		<WorkoutsHistory bind:state {workoutEntries} bind:currentWorkout />
 	</div>
 
 	<!-- ! VIEW_ALL STATE -->
@@ -77,6 +90,14 @@
 				}}
 				class="variant-ghost-secondary px-4 btn active:filter-none hover:filter-none duration-75 mx-12 w-32 rounded-lg py-2 font-semibold uppercase tracking-wide"
 				>Exercises</button
+			>
+
+			<button
+				on:click={() => {
+					state.workoutsHistoryDrawer = workoutsHistoryDrawerState.OPEN;
+				}}
+				class="variant-ghost-secondary px-4 btn active:filter-none hover:filter-none duration-75 mx-12 w-32 rounded-lg py-2 font-semibold uppercase tracking-wide"
+				>History</button
 			>
 
 			<h3 class="h3 -mb-4">Workout Templates</h3>

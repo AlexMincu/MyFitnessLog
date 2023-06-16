@@ -13,7 +13,7 @@ export const actions: Actions = {
 
 		// Validation
 		try {
-			const result = loginSchema.parse(formData);
+			loginSchema.parse(formData);
 		} catch (err) {
 			const { fieldErrors: errors } = err.flatten();
 			return fail(400, { data: { email: email }, validationErrors: errors });
