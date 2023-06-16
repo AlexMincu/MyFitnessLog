@@ -16,11 +16,14 @@
 		deleteWorkoutRequest,
 		editWorkoutRequest
 	} from '$lib/services/workoutService';
+	import { WorkoutType } from '@prisma/client';
 
 	// ******************* Variables *******************
 	export let state: State;
-	export let workout: Workout;
+	export let currentWorkout: Workout;
 	export let selectedExercise: Exercise;
+	export let activeWorkout: Workout | null;
+	export let forceRefresh: Function;
 
 	// ******************* Popups *******************
 	const optionsPopup: PopupSettings = {
@@ -93,13 +96,13 @@
 		};
 		addSet(exercise);
 
-		workout.exercises = [...workout.exercises, exercise];
+		currentWorkout.exercises = [...currentWorkout.exercises, exercise];
 	}
 
 	function removeExercise(exerciseIndex: number) {
-		workout.exercises.splice(exerciseIndex, 1);
+		currentWorkout.exercises.splice(exerciseIndex, 1);
 
-		workout = workout;
+		currentWorkout = currentWorkout;
 	}
 
 	function addSet(exercise: Exercise) {
@@ -135,60 +138,60 @@
 
 	function updateExerciseUI(exercise: Exercise) {
 		updateSetsOrderNumber(exercise.sets);
-		workout = workout;
+		currentWorkout = currentWorkout;
 	}
 
 	// ******************* Async function -> fetch *******************
-	async function saveWorkout() {
-		if (workout.id) {
-			// Update existing template
-			const response = await editWorkoutRequest(workout);
+	async function createWorkout(workout: Workout) {
+		const response = await createWorkoutRequest(workout);
 
-			if (response.success) {
-				console.log(`Workout: Updated workout successfully!`);
+		if (response.success) {
+			console.log('Workout: Create workout successfully!');
 
-				state = { ...state, workout: workoutState.VIEW };
-				invalidateAll();
-			} else if (response.validationErrors) {
-				triggerValidationErrorToasts(response.validationErrors);
+			state.training = trainingState.VIEW_ALL;
+			state.workout = workoutState.VIEW;
+			activeWorkout = null;
+			invalidateAll();
+		} else if (response.validationErrors) {
+			triggerValidationErrorToasts(response.validationErrors);
 
-				console.log(
-					"Workout: Couldn't update workout. Validation Errors: ",
-					response.validationErrors
-				);
-			} else {
-				console.log(`Workout: Something went wrong, couldn't update workout. Response: `, response);
-			}
+			console.log(
+				"Workout: Couldn't create workout. Validation Errors: ",
+				response.validationErrors
+			);
 		} else {
-			// Create new template
-			const response = await createWorkoutRequest(workout);
+			console.log("Workout: Something went wrong, couldn't create workout. Error: ", response);
+		}
+	}
 
-			if (response.success) {
-				console.log('Workout: Create workout successfully!');
+	async function updateWorkout(workout: Workout) {
+		const response = await editWorkoutRequest(workout);
 
-				state = { ...state, training: trainingState.VIEW_ALL };
-				invalidateAll();
-			} else if (response.validationErrors) {
-				triggerValidationErrorToasts(response.validationErrors);
+		if (response.success) {
+			console.log(`Workout: Updated workout successfully!`);
 
-				console.log(
-					"Workout: Couldn't create workout. Validation Errors: ",
-					response.validationErrors
-				);
-			} else {
-				console.log("Workout: Something went wrong, couldn't create workout. Error: ", response);
-			}
+			state.workout = workoutState.VIEW;
+			invalidateAll();
+		} else if (response.validationErrors) {
+			triggerValidationErrorToasts(response.validationErrors);
+
+			console.log(
+				"Workout: Couldn't update workout. Validation Errors: ",
+				response.validationErrors
+			);
+		} else {
+			console.log(`Workout: Something went wrong, couldn't update workout. Response: `, response);
 		}
 	}
 
 	async function deleteWorkout() {
-		if (workout.id) {
-			const response = await deleteWorkoutRequest(workout.id);
+		if (currentWorkout.id) {
+			const response = await deleteWorkoutRequest(currentWorkout.id);
 
 			if (response.success) {
 				console.log(`Workout: Deleted workout successfully!`);
 
-				state = { ...state, training: trainingState.VIEW_ALL };
+				state.training = trainingState.VIEW_ALL;
 				invalidateAll();
 			} else {
 				console.log(`Workout: Something went wrong, couldn't delete workout. Response: `, response);
@@ -198,12 +201,31 @@
 </script>
 
 <!-- ? Workout Card -->
-<div class="card py-3 flex w-full flex-col items-center justify-start gap-4">
+<div
+	class="card py-3 flex w-full flex-col items-center justify-start gap-4 {activeWorkout &&
+	state.workout != workoutState.ACTIVE
+		? 'mt-10'
+		: ''}"
+>
 	<!-- ? Workout Card Header -->
 	<div class="relative w-full flex flex-row justify-between align-center">
+		<!-- ? Go Back Button -->
 		<button
 			on:click={() => {
-				state = { ...state, training: trainingState.VIEW_ALL };
+				if (state.training === trainingState.NEW) {
+					state.training = trainingState.VIEW_ALL;
+				} else if (state.training === trainingState.VIEW_ONE) {
+					if (state.workout === workoutState.VIEW) {
+						state.training = trainingState.VIEW_ALL;
+					} else if (state.workout === workoutState.EDIT) {
+						state.workout = workoutState.VIEW;
+					} else if (state.workout === workoutState.ACTIVE) {
+						state.workout = workoutState.VIEW;
+						state.training = trainingState.VIEW_ALL;
+					}
+				}
+
+				forceRefresh();
 				invalidateAll();
 			}}
 			class="btn-icon w-8 mx-3"
@@ -249,7 +271,7 @@
 					<li class="my-3 flex items-center justify-center">
 						<button
 							on:click={() => {
-								state = { ...state, workout: workoutState.EDIT };
+								state.workout = workoutState.EDIT;
 								invalidateAll();
 							}}
 							class="btn variant-filled-secondary mx-2 w-full !rounded-lg"
@@ -269,49 +291,49 @@
 
 	<!-- ? Workout Title -->
 	<div>
-		{#if state.workout === workoutState.EDIT}
+		{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
 			<input
-				bind:value={workout.title}
+				bind:value={currentWorkout.title}
 				class="h4 input rounded-lg text-center"
 				type="text"
 				placeholder="Workout Title"
 			/>
 		{:else if state.workout === workoutState.VIEW}
-			<div class=" h4 rounded-lg text-center {workout.title ? '' : 'text-red-400'}">
-				{workout.title ? workout.title : 'Missing title!'}
+			<div class=" h4 rounded-lg text-center {currentWorkout.title ? '' : 'text-red-400'}">
+				{currentWorkout.title ? currentWorkout.title : 'Missing title!'}
 			</div>
 		{/if}
 	</div>
 
 	<!-- ? Workout Note -->
 	<div class="w-[90%]">
-		{#if state.workout === workoutState.EDIT}
+		{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
 			<textarea
-				bind:value={workout.note}
+				bind:value={currentWorkout.note}
 				class="textarea rounded-lg"
 				rows="2"
 				placeholder="Workout notes."
 			/>
 		{:else if state.workout === workoutState.VIEW}
 			<div class=" textarea h-16 overflow-hidden overflow-y-scroll break-words rounded-lg p-2">
-				{workout.note}
+				{currentWorkout.note}
 			</div>
 		{/if}
 	</div>
 
 	<!-- ? Exercises -->
-	{#each workout.exercises as exercise, exerciseIndex}
+	{#each currentWorkout.exercises as exercise, exerciseIndex}
 		<!-- ? Exercise container -->
 		<div class="flex w-full flex-col items-center justify-start">
 			<!-- ? Exercise Title -->
 			<div>
-				{#if state.workout === workoutState.EDIT}
+				{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
 					<div class="w-full relative">
 						<button
 							on:click={() => {
 								selectedExercise = exercise;
 
-								state = { ...state, exerciseTemplatesDrawer: exerciseTemplatesDrawerState.OPEN };
+								state.exerciseTemplatesDrawer = exerciseTemplatesDrawerState.OPEN;
 								invalidateAll();
 							}}
 							class="h6 input btn min-w-[200px] max-w-[325px] active:filter-none hover:filter-none h-10 mb-2 rounded-lg text-center"
@@ -390,7 +412,7 @@
 
 			<!-- ? Exercise Note -->
 			<div class="w-full">
-				{#if state.workout === workoutState.EDIT}
+				{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
 					<textarea
 						bind:value={exercise.note}
 						class="textarea active:filter-none hover:filter-none variant-filled-surface w-full rounded-lg p-1.5 text-center"
@@ -424,7 +446,7 @@
 						class="grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
 					>
 						<!-- ? Set Options Column -->
-						{#if state.workout === workoutState.EDIT}
+						{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
 							<div
 								use:popup={{
 									...setTypePopup,
@@ -510,7 +532,7 @@
 
 						<!-- ? Set Weight Column -->
 						<div class="w-full">
-							{#if state.workout === workoutState.EDIT}
+							{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
 								<input
 									bind:value={set.weight}
 									type="text"
@@ -527,7 +549,7 @@
 
 						<!-- ? Set Reps Column -->
 						<div class="w-full">
-							{#if state.workout === workoutState.EDIT}
+							{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
 								<input
 									bind:value={set.reps}
 									type="text"
@@ -546,7 +568,7 @@
 				{/each}
 
 				<!-- ? Add Set Button -->
-				{#if state.workout === workoutState.EDIT}
+				{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
 					<button
 						on:click={() => {
 							addSet(exercise);
@@ -561,7 +583,7 @@
 	{/each}
 
 	<!-- ? Add Exercise Button -->
-	{#if state.workout === workoutState.EDIT}
+	{#if state.workout === workoutState.EDIT || state.workout === workoutState.ACTIVE}
 		<button
 			on:click={addExercise}
 			type="button"
@@ -570,22 +592,55 @@
 		>
 	{/if}
 
+	<!-- ? Create/Update Workout Template Button -->
 	{#if state.workout === workoutState.EDIT}
-		<!-- ? Create/Update Workout Template Button -->
 		<button
-			on:click={saveWorkout}
-			type="submit"
+			on:click={() => {
+				if (currentWorkout.id === null) {
+					createWorkout(currentWorkout);
+				} else {
+					updateWorkout(currentWorkout);
+				}
+			}}
 			class="btn variant-filled-success mx-6 h-8 rounded-lg font-semibold uppercase tracking-wide"
 			>save workout template</button
 		>
-	{:else if state.workout === workoutState.VIEW}
+
 		<!-- ? Start Workout Template -->
+	{:else if state.workout === workoutState.VIEW}
 		<button
 			on:click={() => {
-				alert('TODO');
+				activeWorkout = { ...currentWorkout, type: WorkoutType.ENTRY };
+
+				state.workout = workoutState.ACTIVE;
+				invalidateAll();
 			}}
 			class="btn variant-filled-secondary mx-6 h-12 rounded-lg font-semibold uppercase tracking-wide"
-			>Start Workout</button
+			>Start New Workout</button
 		>
+	{:else if state.workout === workoutState.ACTIVE}
+		<div class="flex flex-row mt-8 justify-between h-30 w-52">
+			<div>
+				<button
+					on:click={() => {
+						if (activeWorkout) createWorkout(activeWorkout);
+					}}
+					class="btn variant-filled-secondary w-24 h-15 rounded-lg font-semibold uppercase tracking-wide"
+					>Log
+				</button>
+			</div>
+			<div>
+				<button
+					on:click={() => {
+						activeWorkout = null;
+						state.training = trainingState.VIEW_ALL;
+
+						invalidateAll();
+					}}
+					class="btn variant-ghost-error w-24 h-15 rounded-lg font-semibold uppercase tracking-wide"
+					>Cancel
+				</button>
+			</div>
+		</div>
 	{/if}
 </div>

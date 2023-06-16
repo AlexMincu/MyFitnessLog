@@ -1,5 +1,6 @@
 import type { PageServerLoad } from '../$types';
 import { db } from '$lib/database';
+import { WorkoutType } from '@prisma/client';
 
 async function getUserId(email: string) {
 	const user = await db.user.findUnique({
@@ -13,10 +14,10 @@ async function getUserId(email: string) {
 	return null;
 }
 
-async function getWorkouts(userId: string) {
+async function getWorkouts(userId: string, workoutsType: WorkoutType) {
 	const workouts = await db.workout.findMany({
 		where: {
-			userId
+			AND: [{ userId }, { type: workoutsType }]
 		},
 		include: {
 			exercises: {
@@ -51,29 +52,17 @@ async function getExerciseTemplates(userId: string) {
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const userId = await getUserId(locals.user.email);
-	const returnArray = [];
 
 	if (userId) {
 		// * Workout Templates
-		const workouts = await getWorkouts(userId);
+		const workoutTemplates = await getWorkouts(userId, WorkoutType.TEMPLATE);
 
-		if (workouts) {
-			workouts.forEach((workout) => {
-				workout.userId = null;
-			});
-			returnArray.push();
-		}
+		// * Workout Entries
+		const workoutEntries = await getWorkouts(userId, WorkoutType.ENTRY);
 
 		// * Exercise Templates
 		const exerciseTemplates = await getExerciseTemplates(userId);
 
-		// TODO
-		// if (exerciseTemplates) {
-		// 	exerciseTemplates.forEach((exercise) => {
-		// 		exercise.userId = null;
-		// 	});
-		// }
-
-		return { workoutTemplates: workouts, exerciseTemplates };
+		return { workoutTemplates, workoutEntries, exerciseTemplates };
 	}
 };

@@ -9,6 +9,7 @@ async function createWorkout(email: string, workout: Workout) {
 		const createdWorkout = await db.workout.create({
 			data: {
 				title: workout.title,
+				type: workout.type,
 				note: workout.note,
 				favorite: workout.favorite,
 				user: {

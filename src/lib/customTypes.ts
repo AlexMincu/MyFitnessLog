@@ -1,7 +1,9 @@
+import type { WorkoutType } from '@prisma/client';
+
 export type Workout = {
 	id: string | null;
 	title: string;
-	type: string;
+	type: WorkoutType;
 	favorite: boolean;
 	note: string;
 	exercises: Exercise[];
@@ -34,7 +36,8 @@ export enum trainingState {
 
 export enum workoutState {
 	VIEW = 'VIEW',
-	EDIT = 'EDIT'
+	EDIT = 'EDIT',
+	ACTIVE = 'ACTIVE'
 }
 
 export type ExerciseTemplate = {

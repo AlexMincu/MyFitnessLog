@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 
 	import ExerciseTemplates from '$lib/components/ExerciseTemplates.svelte';
-	import Workout from '$lib/components/Workout.svelte';
+	import WorkoutComponent from '$lib/components/WorkoutComponent.svelte';
 
 	import {
 		exerciseTemplatesDrawerState,
@@ -11,7 +11,8 @@
 		workoutState,
 		exerciseTemplateState
 	} from '$lib/customTypes';
-	import type { State, Workout as WorkoutType, Exercise } from '$lib/customTypes';
+	import type { State, Workout, Exercise } from '$lib/customTypes';
+	import { WorkoutType } from '@prisma/client';
 
 	// ******************* Variables *******************
 
@@ -23,16 +24,34 @@
 	};
 
 	$: workoutTemplates = $page.data.workoutTemplates;
+	$: workoutEntries = $page.data.workoutEntries;
 	$: exerciseTemplates = $page.data.exerciseTemplates;
 
-	let currentWorkout: WorkoutType;
+	let currentWorkout: Workout;
 	let selectedExercise: Exercise;
+	let activeWorkout: Workout | null = null;
 
 	// ******************* Functions *******************
 	function forceRefresh() {
 		currentWorkout = currentWorkout;
+		activeWorkout = activeWorkout;
 	}
 </script>
+
+<!-- ! Active Workout -->
+{#if activeWorkout && state.workout !== workoutState.ACTIVE}
+	<div class="w-full h-10 mt-16 fixed top-0 left-0 z-[500]">
+		<button
+			on:click={() => {
+				state.training = trainingState.VIEW_ONE;
+				state.workout = workoutState.ACTIVE;
+			}}
+			class="variant-filled-success w-full h-full btn active:scale-100 font-semibold"
+		>
+			In Progress: {activeWorkout.title}
+		</button>
+	</div>
+{/if}
 
 <!-- ! Exercise Templates 'Drawer' -->
 <div class="w-full h-full relative">
@@ -48,32 +67,37 @@
 	<!-- ! VIEW_ALL STATE -->
 	{#if state.training === trainingState.VIEW_ALL}
 		<div
-			class="container mx-auto flex h-full w-[95%] py-6 flex-col items-center justify-start gap-5"
+			class="container mx-auto flex h-full w-[95%] py-6 flex-col items-center justify-start gap-5 {activeWorkout
+				? 'mt-8'
+				: ''}"
 		>
 			<button
 				on:click={() => {
-					state = { ...state, training: trainingState.NEW, workout: workoutState.EDIT };
+					state.exerciseTemplatesDrawer = exerciseTemplatesDrawerState.OPEN;
+				}}
+				class="variant-ghost-secondary px-4 btn active:filter-none hover:filter-none duration-75 mx-12 w-32 rounded-lg py-2 font-semibold uppercase tracking-wide"
+				>Exercises</button
+			>
+
+			<h3 class="h3 -mb-4">Workout Templates</h3>
+
+			<button
+				on:click={() => {
+					state.training = trainingState.NEW;
+					state.workout = workoutState.EDIT;
 
 					currentWorkout = {
 						id: null,
 						title: '',
-						type: 'TEMPLATE',
+						type: WorkoutType.TEMPLATE,
 						favorite: false,
 						note: '',
 						exercises: []
 					};
 					invalidateAll();
 				}}
-				class="variant-ghost-primary btn mx-6 my-2 rounded-lg py-2 font-semibold uppercase tracking-wide"
+				class="variant-ghost-primary btn mx-6 rounded-lg py-2 font-semibold uppercase tracking-wide"
 				>create workout template</button
-			>
-
-			<button
-				on:click={() => {
-					state.exerciseTemplatesDrawer = exerciseTemplatesDrawerState.OPEN;
-				}}
-				class="variant-ghost-secondary px-4 btn active:filter-none hover:filter-none duration-75 mx-12 mb-2 rounded-lg py-2 font-semibold uppercase tracking-wide"
-				>Exercise Templates</button
 			>
 
 			{#if workoutTemplates}
@@ -82,7 +106,8 @@
 						on:click={() => {
 							currentWorkout = workout;
 
-							state = { ...state, training: trainingState.VIEW_ONE, workout: workoutState.VIEW };
+							state.training = trainingState.VIEW_ONE;
+							state.workout = workoutState.VIEW;
 							invalidateAll();
 						}}
 						class="card card-hover flex w-full cursor-pointer flex-col items-center justify-start rounded-lg py-3"
@@ -107,7 +132,13 @@
 		<div
 			class={state.exerciseTemplatesDrawer === exerciseTemplatesDrawerState.OPEN ? 'hidden' : ''}
 		>
-			<Workout bind:state bind:workout={currentWorkout} bind:selectedExercise />
+			<WorkoutComponent
+				bind:state
+				bind:currentWorkout
+				bind:selectedExercise
+				bind:activeWorkout
+				{forceRefresh}
+			/>
 		</div>
 	{/if}
 </div>

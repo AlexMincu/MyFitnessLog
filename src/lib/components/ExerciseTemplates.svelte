@@ -55,7 +55,8 @@
 			if (response.success) {
 				console.log('ExerciseTemplates: Created exercise template successfully');
 
-				state = { ...state, exerciseTemplate: exerciseTemplateState.VIEW };
+				state.exerciseTemplate = exerciseTemplateState.VIEW;
+
 				invalidateAll();
 			} else if (response.validationErrors) {
 				triggerValidationErrorToasts(response.validationErrors);
@@ -79,7 +80,8 @@
 			if (response.success) {
 				console.log('ExerciseTemplates: Updated exercise template successfully');
 
-				state = { ...state, exerciseTemplate: exerciseTemplateState.VIEW };
+				state.exerciseTemplate = exerciseTemplateState.VIEW;
+
 				invalidateAll();
 			} else if (response.validationErrors) {
 				triggerValidationErrorToasts(response.validationErrors);
@@ -104,7 +106,8 @@
 			if (response.success) {
 				console.log(`ExerciseTemplates: Deleted exercise successfully!`);
 
-				state = { ...state, exerciseTemplate: exerciseTemplateState.VIEW };
+				state.exerciseTemplate = exerciseTemplateState.VIEW;
+
 				invalidateAll();
 			} else {
 				console.log(
@@ -138,10 +141,10 @@
 		<button
 			on:click={() => {
 				if (state.exerciseTemplate === exerciseTemplateState.EDIT) {
-					state = { ...state, exerciseTemplate: exerciseTemplateState.VIEW };
+					state.exerciseTemplate = exerciseTemplateState.VIEW;
 					invalidateAll();
 				} else {
-					state = { ...state, exerciseTemplatesDrawer: exerciseTemplatesDrawerState.CLOSE };
+					state.exerciseTemplatesDrawer = exerciseTemplatesDrawerState.CLOSE;
 					invalidateAll();
 				}
 			}}
@@ -173,7 +176,7 @@
 			<!-- ? Create Exercise Template Button -->
 			<button
 				on:click={() => {
-					state = { ...state, exerciseTemplate: exerciseTemplateState.EDIT };
+					state.exerciseTemplate = exerciseTemplateState.EDIT;
 					invalidateAll();
 
 					currentExerciseTemplate = {
@@ -200,12 +203,13 @@
 							};
 
 							if (state.training === trainingState.VIEW_ALL) {
-								state = { ...state, exerciseTemplate: exerciseTemplateState.EDIT };
+								state.exerciseTemplate = exerciseTemplateState.EDIT;
+
 								invalidateAll();
 							} else {
 								selectedExercise.exerciseTemplate = currentExerciseTemplate;
 
-								state = { ...state, exerciseTemplatesDrawer: exerciseTemplatesDrawerState.CLOSE };
+								state.exerciseTemplatesDrawer = exerciseTemplatesDrawerState.CLOSE;
 								invalidateAll();
 								forceRefresh();
 							}
