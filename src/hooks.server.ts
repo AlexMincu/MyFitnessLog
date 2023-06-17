@@ -29,6 +29,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 			email: user.email,
 			role: user.role
 		};
+
+		console.log('path', event.url.pathname);
+		if (event.url.pathname === '/') {
+			throw redirect(303, '/training');
+		}
 	} else {
 		// no user with this session
 		event.cookies.set('session', '', {
