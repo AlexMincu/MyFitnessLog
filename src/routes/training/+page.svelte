@@ -43,11 +43,13 @@
 
 <!-- ! Active Workout -->
 {#if activeWorkout && state.workout !== workoutState.ACTIVE}
-	<div class="w-full h-10 mt-16 fixed top-0 left-0 z-10">
+	<div class="w-full h-10 mt-16 md:mt-20 fixed top-0 left-0 z-10">
 		<button
 			on:click={() => {
 				state.training = trainingState.VIEW_ONE;
 				state.workout = workoutState.ACTIVE;
+				state.exerciseTemplatesDrawer = exerciseTemplatesDrawerState.CLOSE;
+				state.workoutsHistoryDrawer = workoutsHistoryDrawerState.CLOSE;
 			}}
 			class="variant-filled-secondary w-full h-full rounded-none btn active:scale-100 font-semibold"
 		>
@@ -80,7 +82,7 @@
 	<!-- ! VIEW_ALL STATE -->
 	{#if state.training === trainingState.VIEW_ALL}
 		<div
-			class="container mx-auto flex h-full w-[95%] py-6 flex-col items-center justify-start gap-5 {activeWorkout
+			class="container mx-auto flex h-full w-[95%] md:w-[450px] py-6 flex-col items-center justify-start gap-5 {activeWorkout
 				? 'mt-8'
 				: ''}"
 		>

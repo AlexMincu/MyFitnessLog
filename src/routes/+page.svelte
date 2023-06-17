@@ -1,5 +1,5 @@
 <div
-	class="container mx-auto flex h-full flex-col gap-32 items-center justify-start my-10 text-center px-6"
+	class="container mx-auto flex h-full flex-col gap-32 items-center justify-start my-10 text-center px-6 lg:px-32"
 >
 	<div class="flex flex-col items-center">
 		<h1 class="h1 text-5xl font-semibold">Unlock your potential with MyFitnessLog!</h1>

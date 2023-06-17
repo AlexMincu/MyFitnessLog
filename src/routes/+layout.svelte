@@ -132,7 +132,7 @@
 								</li>
 
 								<li class="account-list-item">
-									<a class="btn btn-sm" href="/"> Settings </a>
+									<a class="btn btn-sm" href="/soon"> Settings </a>
 								</li>
 
 								<li class="account-list-item">

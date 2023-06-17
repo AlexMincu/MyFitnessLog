@@ -17,7 +17,7 @@
 	export let currentWorkout: Workout;
 </script>
 
-<div class="w-[90%] h-fit py-3 pb-8 mx-auto">
+<div class="w-[90%] max-w-[550px] h-fit py-3 pb-8 mx-auto">
 	<!-- ? Header -->
 	<div class="h-10 mb-4 w-full relative">
 		<button
@@ -50,7 +50,7 @@
 	</div>
 
 	<!-- ? Content -->
-	<div class="flex flex-col gap-5">
+	<div class="flex flex-col gap-5 items-center">
 		{#if workoutEntries.length}
 			{#each workoutEntries as workout}
 				<button
@@ -62,7 +62,7 @@
 						state.workoutsHistoryDrawer = workoutsHistoryDrawerState.CLOSE;
 						invalidateAll();
 					}}
-					class="card card-hover flex w-full cursor-pointer flex-col items-center justify-start rounded-lg py-3"
+					class="card card-hover max-w-md flex w-full cursor-pointer flex-col items-center justify-start rounded-lg py-3"
 				>
 					<h2 class="h2 text-surface-800-100-token">{workout.title}</h2>
 					<ul class="list">

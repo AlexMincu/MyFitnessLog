@@ -210,7 +210,7 @@
 
 <!-- ? Workout Card -->
 <div
-	class="card rounded-none py-3 flex w-full flex-col items-center justify-start gap-4 {activeWorkout &&
+	class="card md:w-[450px] md:mx-auto md:my-10 rounded-none py-3 flex w-full flex-col items-center justify-start gap-4 {activeWorkout &&
 	state.workout != workoutState.ACTIVE
 		? 'mt-10'
 		: ''}"

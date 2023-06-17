@@ -2,7 +2,7 @@ import { db } from '$lib/database';
 import { WorkoutType } from '$lib/customTypes';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 
-async function getExerciseHistory(exerciseTemplateId: string) {
+async function getExerciseHistory(exerciseTemplateId: string, userId: string) {
 	try {
 		const exerciseHistory = await db.exercise.findMany({
 			where: {
@@ -10,7 +10,8 @@ async function getExerciseHistory(exerciseTemplateId: string) {
 					{ exerciseTemplateId },
 					{
 						workout: {
-							type: WorkoutType.ENTRY
+							type: WorkoutType.ENTRY,
+							userId
 						}
 					}
 				]
@@ -40,13 +41,25 @@ async function getExerciseHistory(exerciseTemplateId: string) {
 	}
 }
 
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, locals }) => {
 	const pathArray = url.pathname.split('/');
 	const exerciseTemplateId = pathArray[pathArray.length - 1];
 
-	const exerciseHistory = await getExerciseHistory(exerciseTemplateId);
+	const user = await db.user.findUnique({
+		where: {
+			email: locals.user.email
+		}
+	});
 
-	if (exerciseHistory && exerciseHistory.error) {
+	let exerciseHistory;
+
+	if (user) {
+		exerciseHistory = await getExerciseHistory(exerciseTemplateId, user.id);
+
+		if (exerciseHistory && exerciseHistory.error) {
+			throw error(500);
+		}
+	} else {
 		throw error(500);
 	}
 

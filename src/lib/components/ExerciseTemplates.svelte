@@ -135,7 +135,7 @@
 	}
 </script>
 
-<div class="w-[90%] h-fit py-3 pb-8 mx-auto">
+<div class="w-[90%] max-w-[550px] h-fit py-3 pb-8 mx-auto">
 	<!-- ? Header -->
 	<div class="h-10 w-full relative">
 		<button
@@ -225,7 +225,7 @@
 				{/each}
 			</div>
 		{:else if state.exerciseTemplate === exerciseTemplateState.EDIT}
-			<div class="card w-full max-w-md rounded-lg py-10 px-6 flex flex-col text-center">
+			<div class="card w-full max-w-md mx-auto rounded-lg py-10 px-6 flex flex-col text-center">
 				<div class="w-full flex align-center justify-center">
 					<input
 						bind:value={currentExerciseTemplate.title}
