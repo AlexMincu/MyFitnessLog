@@ -18,7 +18,7 @@
 				value={form?.data?.firstName ?? ''}
 			/>
 			{#if form?.errors?.firstName}
-				<span class="text-red-500"> {form?.errors?.firstName[0]} </span>
+				<span class="text-error-500"> {form?.errors?.firstName[0]} </span>
 			{/if}
 		</label>
 
@@ -31,7 +31,7 @@
 				value={form?.data?.lastName ?? ''}
 			/>
 			{#if form?.errors?.lastName}
-				<span class="text-red-500"> {form?.errors?.lastName[0]} </span>
+				<span class="text-error-500"> {form?.errors?.lastName[0]} </span>
 			{/if}
 		</label>
 
@@ -45,7 +45,7 @@
 				value={form?.data?.email ?? ''}
 			/>
 			{#if form?.errors?.email}
-				<span class="text-red-500"> {form?.errors?.email[0]} </span>
+				<span class="text-error-500"> {form?.errors?.email[0]} </span>
 			{/if}
 		</label>
 
@@ -57,7 +57,7 @@
 				type="password"
 			/>
 			{#if form?.errors?.password}
-				<span class="text-red-500"> {form?.errors?.password[0]} </span>
+				<span class="text-error-500"> {form?.errors?.password[0]} </span>
 			{/if}
 		</label>
 
@@ -69,7 +69,7 @@
 				type="password"
 			/>
 			{#if form?.errors?.passwordConfirm}
-				<span class="text-red-500"> {form?.errors?.passwordConfirm[0]} </span>
+				<span class="text-error-500"> {form?.errors?.passwordConfirm[0]} </span>
 			{/if}
 		</label>
 

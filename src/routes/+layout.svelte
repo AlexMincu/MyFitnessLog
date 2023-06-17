@@ -52,7 +52,7 @@
 <Modal />
 
 <!-- ! Drawer Component -->
-<Drawer>
+<Drawer class="z-[100]">
 	{#if $drawerStore.id === 'navigation'}
 		<h3 class="h3 mb-4 mt-8 w-auto text-center">Menu</h3>
 		<hr class="!border-t-2" />
@@ -64,7 +64,7 @@
 <Toast max={5} />
 
 <!-- ! App Shell -->
-<AppShell regionPage="hide-scrollbar">
+<AppShell regionPage="hide-scrollbar" slotHeader="z-50">
 	<svelte:fragment slot="header">
 		<!-- ! App Bar Component -->
 		<AppBar

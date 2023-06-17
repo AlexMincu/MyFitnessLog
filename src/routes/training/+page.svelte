@@ -43,13 +43,13 @@
 
 <!-- ! Active Workout -->
 {#if activeWorkout && state.workout !== workoutState.ACTIVE}
-	<div class="w-full h-10 mt-16 fixed top-0 left-0 z-[500]">
+	<div class="w-full h-10 mt-16 fixed top-0 left-0 z-10">
 		<button
 			on:click={() => {
 				state.training = trainingState.VIEW_ONE;
 				state.workout = workoutState.ACTIVE;
 			}}
-			class="variant-filled-tertiary w-full h-full btn active:scale-100 font-semibold"
+			class="variant-filled-secondary w-full h-full rounded-none btn active:scale-100 font-semibold"
 		>
 			In Progress: {activeWorkout.title}
 		</button>
@@ -88,7 +88,7 @@
 				on:click={() => {
 					state.exerciseTemplatesDrawer = exerciseTemplatesDrawerState.OPEN;
 				}}
-				class="variant-ghost-secondary px-4 btn active:filter-none hover:filter-none duration-75 mx-12 w-32 rounded-lg py-2 font-semibold uppercase tracking-wide"
+				class="variant-ghost-tertiary px-4 btn active:filter-none hover:filter-none duration-75 mx-12 w-32 py-2 font-semibold uppercase tracking-wide"
 				>Exercises</button
 			>
 
@@ -96,7 +96,7 @@
 				on:click={() => {
 					state.workoutsHistoryDrawer = workoutsHistoryDrawerState.OPEN;
 				}}
-				class="variant-ghost-secondary px-4 btn active:filter-none hover:filter-none duration-75 mx-12 w-32 rounded-lg py-2 font-semibold uppercase tracking-wide"
+				class="variant-ghost-tertiary px-4 btn active:filter-none hover:filter-none duration-75 mx-12 w-32 py-2 font-semibold uppercase tracking-wide"
 				>History</button
 			>
 
@@ -117,7 +117,7 @@
 					};
 					invalidateAll();
 				}}
-				class="variant-ghost-primary btn mx-6 rounded-lg py-2 font-semibold uppercase tracking-wide"
+				class="variant-ghost-primary btn mx-6 py-2 font-semibold uppercase tracking-wide"
 				>create workout template</button
 			>
 

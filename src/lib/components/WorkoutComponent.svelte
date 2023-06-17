@@ -210,7 +210,7 @@
 
 <!-- ? Workout Card -->
 <div
-	class="card py-3 flex w-full flex-col items-center justify-start gap-4 {activeWorkout &&
+	class="card rounded-none py-3 flex w-full flex-col items-center justify-start gap-4 {activeWorkout &&
 	state.workout != workoutState.ACTIVE
 		? 'mt-10'
 		: ''}"
@@ -282,14 +282,13 @@
 								state.workout = workoutState.EDIT;
 								invalidateAll();
 							}}
-							class="btn variant-filled-secondary mx-2 w-full !rounded-lg"
+							class="btn variant-ghost-tertiary mx-2 w-full !rounded-lg"
 							type="button">Edit</button
 						>
 					</li>
 					<li class="my-3 flex items-center justify-center">
-						<button
-							on:click={deleteWorkout}
-							class="variant-filled-error btn mx-2 w-full !rounded-lg">Delete</button
+						<button on:click={deleteWorkout} class="variant-ghost-error btn mx-2 w-full !rounded-lg"
+							>Delete</button
 						>
 					</li>
 				</ul>
@@ -314,7 +313,7 @@
 				placeholder="Workout Title"
 			/>
 		{:else if state.workout === workoutState.VIEW}
-			<div class=" h4 rounded-lg text-center {currentWorkout.title ? '' : 'text-red-400'}">
+			<div class=" h4 rounded-lg text-center {currentWorkout.title ? '' : 'text-error-500'}">
 				{currentWorkout.title ? currentWorkout.title : 'Missing title!'}
 			</div>
 		{/if}
@@ -365,8 +364,8 @@
 									class="w-full h-full break-all text-ellipsis overflow-hidden {exercise.exerciseTemplate
 										? exercise.exerciseTemplate.title
 											? ''
-											: 'text-orange-400'
-										: 'text-orange-400'}"
+											: 'text-warning-500'
+										: 'text-warning-500'}"
 								>
 									{exercise.exerciseTemplate
 										? exercise.exerciseTemplate.title
@@ -421,8 +420,8 @@
 							class="h6 mb-2 rounded-lg text-center {exercise.exerciseTemplate
 								? exercise.exerciseTemplate.title
 									? ''
-									: 'text-red-400'
-								: 'text-red-400'}"
+									: 'text-error-500'
+								: 'text-error-500'}"
 						>
 							{exercise.exerciseTemplate
 								? exercise.exerciseTemplate.title
@@ -452,10 +451,10 @@
 				</div>
 
 				<!-- ? Sets container -->
-				<div class="flex flex-col w-full items-center">
+				<div class="flex flex-col w-full gap-1 items-center">
 					<!-- ? Sets Header -->
 					<div
-						class="mb-1.5 grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
+						class="mb-1.5 grid w-full grid-cols-3 content-center justify-items-center text-center"
 					>
 						<div>Set</div>
 						<div>Weight</div>
@@ -465,9 +464,7 @@
 					<!-- ? Sets Rows -->
 					{#each exercise.sets as set, setIndex}
 						<!-- ? Set container -->
-						<div
-							class="grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
-						>
+						<div class="grid w-full grid-cols-3 content-center justify-items-center text-center">
 							<!-- ? Set Options Column -->
 							{#if state.workout === workoutState.EDIT}
 								<div
@@ -475,9 +472,10 @@
 										...setTypePopup,
 										target: `setTypePopup-${exerciseIndex}-${setIndex}`
 									}}
-									class="cursor-pointer btn-icon {set.type === 'W'
-										? 'text-orange-400'
-										: ''} {set.type === 'D' ? 'text-red-400' : ''}"
+									class="cursor-pointer btn-icon ring-1 ring-inset ring-surface-400-500-token bg-surface-200-700-token {set.type ===
+									'W'
+										? 'text-warning-600'
+										: ''} {set.type === 'D' ? 'text-error-400' : ''}"
 								>
 									{#if set.type === 'W'}
 										W
@@ -542,9 +540,10 @@
 								</div>
 							{:else if state.workout === workoutState.VIEW}
 								<div
-									class="btn-icon cursor-default !bg-transparent {set.type === 'W'
-										? 'text-orange-400'
-										: ''} {set.type === 'D' ? 'text-red-400' : ''}"
+									class="btn-icon cursor-default ring-1 ring-inset ring-surface-400-500-token bg-surface-200-700-token {set.type ===
+									'W'
+										? 'text-warning-600'
+										: ''} {set.type === 'D' ? 'text-error-400' : ''}"
 								>
 									{#if set.type === 'W'}
 										W
@@ -557,7 +556,7 @@
 							{/if}
 
 							<!-- ? Set Weight Column -->
-							<div class="w-full">
+							<div class="w-full flex align-center justify-center">
 								{#if state.workout === workoutState.EDIT}
 									<input
 										bind:value={set.weight}
@@ -574,7 +573,7 @@
 							</div>
 
 							<!-- ? Set Reps Column -->
-							<div class="w-full">
+							<div class="w-full flex align-center justify-center">
 								{#if state.workout === workoutState.EDIT}
 									<input
 										bind:value={set.reps}
@@ -629,8 +628,8 @@
 									class="w-full h-full break-all text-ellipsis overflow-hidden {exercise.exerciseTemplate
 										? exercise.exerciseTemplate.title
 											? ''
-											: 'text-orange-400'
-										: 'text-orange-400'}"
+											: 'text-warning-500'
+										: 'text-warning-500'}"
 								>
 									{exercise.exerciseTemplate
 										? exercise.exerciseTemplate.title
@@ -693,10 +692,10 @@
 					</div>
 
 					<!-- ? Sets container -->
-					<div class="flex flex-col w-full items-center">
+					<div class="flex flex-col w-full gap-1 items-center">
 						<!-- ? Sets Header -->
 						<div
-							class="mb-1.5 grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
+							class="mb-1.5 grid w-full grid-cols-3 content-center justify-items-center text-center"
 						>
 							<div>Set</div>
 							<div>Weight</div>
@@ -706,9 +705,7 @@
 						<!-- ? Sets Rows -->
 						{#each exercise.sets as set, setIndex}
 							<!-- ? Set container -->
-							<div
-								class="grid w-full grid-cols-[80px_repeat(2,1fr)_48px] content-center justify-items-center text-center"
-							>
+							<div class="grid w-full grid-cols-3 content-center justify-items-center text-center">
 								<!-- ? Set Options Column -->
 
 								<div
@@ -716,9 +713,10 @@
 										...setTypePopup,
 										target: `setTypePopup-${exerciseIndex}-${setIndex}`
 									}}
-									class="cursor-pointer btn-icon {set.type === 'W'
-										? 'text-orange-400'
-										: ''} {set.type === 'D' ? 'text-red-400' : ''}"
+									class="cursor-pointer btn-icon ring-1 ring-inset ring-surface-400-500-token bg-surface-200-700-token {set.type ===
+									'W'
+										? 'text-warning-600'
+										: ''} {set.type === 'D' ? 'text-error-400' : ''}"
 								>
 									{#if set.type === 'W'}
 										W
@@ -783,7 +781,7 @@
 								</div>
 
 								<!-- ? Set Weight Column -->
-								<div class="w-full">
+								<div class="w-full flex align-center justify-center">
 									<input
 										bind:value={set.weight}
 										type="text"
@@ -792,7 +790,7 @@
 								</div>
 
 								<!-- ? Set Reps Column -->
-								<div class="w-full">
+								<div class="w-full flex align-center justify-center">
 									<input
 										bind:value={set.reps}
 										type="text"
@@ -847,7 +845,7 @@
 					updateWorkout(currentWorkout);
 				}
 			}}
-			class="btn variant-filled-tertiary mx-6 h-8 rounded-lg font-semibold uppercase tracking-wide"
+			class="btn variant-ghost-secondary mx-6 h-8 font-semibold uppercase tracking-wide"
 			>save workout template</button
 		>
 
@@ -860,7 +858,7 @@
 				state.workout = workoutState.ACTIVE;
 				invalidateAll();
 			}}
-			class="btn variant-filled-secondary mx-6 h-12 rounded-lg font-semibold uppercase tracking-wide"
+			class="btn variant-ghost-secondary mx-6 h-12 font-semibold uppercase tracking-wide"
 			>Start New Workout</button
 		>
 	{:else if state.workout === workoutState.ACTIVE}
@@ -870,7 +868,7 @@
 					on:click={() => {
 						if (activeWorkout) createWorkout(activeWorkout);
 					}}
-					class="btn variant-filled-secondary w-24 h-15 rounded-lg font-semibold uppercase tracking-wide"
+					class="btn variant-ghost-secondary w-24 h-15 font-semibold uppercase tracking-wide"
 					>Log
 				</button>
 			</div>
@@ -882,7 +880,7 @@
 
 						invalidateAll();
 					}}
-					class="btn variant-ghost-error w-24 h-15 rounded-lg font-semibold uppercase tracking-wide"
+					class="btn variant-ghost-error w-24 h-15 font-semibold uppercase tracking-wide"
 					>Cancel
 				</button>
 			</div>

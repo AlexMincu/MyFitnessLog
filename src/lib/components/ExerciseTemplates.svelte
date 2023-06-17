@@ -226,7 +226,7 @@
 			</div>
 		{:else if state.exerciseTemplate === exerciseTemplateState.EDIT}
 			<div class="card w-full max-w-md rounded-lg py-10 px-6 flex flex-col text-center">
-				<div class="w-full">
+				<div class="w-full flex align-center justify-center">
 					<input
 						bind:value={currentExerciseTemplate.title}
 						class="h6 font-bold input h-9 mb-2 rounded-lg text-center variant-filled-surface"
@@ -249,7 +249,7 @@
 					<!-- ? Save Button -->
 					<button
 						on:click={saveExerciseTemplate}
-						class="variant-ghost-primary btn btn-sm mx-auto my-2 rounded-lg py-2 font-semibold uppercase tracking-wide"
+						class="variant-ghost-secondary btn btn-sm mx-auto my-2 rounded-lg py-2 font-semibold uppercase tracking-wide"
 						>save</button
 					>
 					{#if currentExerciseTemplate.id !== null}

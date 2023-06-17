@@ -17,8 +17,8 @@
 			{#each sets as set}
 				<tr>
 					<td
-						class="text-center {set.type === 'W' ? 'text-orange-400' : ''} {set.type === 'D'
-							? 'text-red-400'
+						class="text-center {set.type === 'W' ? 'text-warning-600' : ''} {set.type === 'D'
+							? 'text-error-400'
 							: ''}"
 					>
 						{#if set.type === 'W'}

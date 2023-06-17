@@ -31,12 +31,12 @@
 
 		{#if form?.validationErrors}
 			{#if form?.validationErrors.email}
-				<p class="text-red-500">{form?.validationErrors.email[0]}</p>
+				<p class="text-error-500">{form?.validationErrors.email[0]}</p>
 			{:else if form?.validationErrors.password}
-				<p class="text-red-500">{form?.validationErrors.password[0]}</p>
+				<p class="text-error-500">{form?.validationErrors.password[0]}</p>
 			{/if}
 		{:else if form?.credentials}
-			<p class="text-red-500">You have entered the wrong credentials.</p>
+			<p class="text-error-500">You have entered the wrong credentials.</p>
 		{/if}
 
 		<button type="submit" class="btn variant-filled-primary my-6 rounded-full">Sign in</button>
