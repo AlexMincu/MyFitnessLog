@@ -16,14 +16,14 @@
 			<li class="hover:variant-soft-primary">
 				<a class="btn" href="/training" on:click={closeDrawer}> <span>Training</span> </a>
 			</li>
-			<li class="hover:variant-soft-primary">
-				<a class="btn" href="/" on:click={closeDrawer}> <span>Habits</span> </a>
+			<li class="">
+				<a class="btn" href="/soon" on:click={closeDrawer}> <span>Habits</span> </a>
 			</li>
-			<li class="hover:variant-soft-primary">
-				<a class="btn" href="/" on:click={closeDrawer}> <span>Measurements</span> </a>
+			<li class="">
+				<a class="btn" href="/soon" on:click={closeDrawer}> <span>Measurements</span> </a>
 			</li>
-			<li class="hover:variant-soft-primary">
-				<a class="btn" href="/" on:click={closeDrawer}> <span>Statistics</span> </a>
+			<li class="">
+				<a class="btn" href="/soon" on:click={closeDrawer}> <span>Statistics</span> </a>
 			</li>
 		</ul>
 	</nav>

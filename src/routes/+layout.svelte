@@ -132,9 +132,6 @@
 								</li>
 
 								<li class="account-list-item">
-									<a class="btn btn-sm" href="/"> Account </a>
-								</li>
-								<li class="account-list-item">
 									<a class="btn btn-sm" href="/"> Settings </a>
 								</li>
 
