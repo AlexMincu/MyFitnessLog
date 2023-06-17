@@ -49,7 +49,7 @@
 				state.training = trainingState.VIEW_ONE;
 				state.workout = workoutState.ACTIVE;
 			}}
-			class="variant-filled-success w-full h-full btn active:scale-100 font-semibold"
+			class="variant-filled-tertiary w-full h-full btn active:scale-100 font-semibold"
 		>
 			In Progress: {activeWorkout.title}
 		</button>

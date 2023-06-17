@@ -847,7 +847,7 @@
 					updateWorkout(currentWorkout);
 				}
 			}}
-			class="btn variant-filled-success mx-6 h-8 rounded-lg font-semibold uppercase tracking-wide"
+			class="btn variant-filled-tertiary mx-6 h-8 rounded-lg font-semibold uppercase tracking-wide"
 			>save workout template</button
 		>
 
