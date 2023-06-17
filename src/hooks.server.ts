@@ -30,7 +30,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 			role: user.role
 		};
 
-		console.log('path', event.url.pathname);
 		if (event.url.pathname === '/') {
 			throw redirect(303, '/training');
 		}

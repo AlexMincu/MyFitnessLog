@@ -48,6 +48,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>MyFitnessLog</title>
+</svelte:head>
+
 <!-- ! Modal Component -->
 <Modal />
 
