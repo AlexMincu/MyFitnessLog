@@ -1,5 +1,5 @@
 import { db } from '$lib/database';
-import { WorkoutType } from '@prisma/client';
+import { WorkoutType } from '$lib/customTypes';
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 
 async function getExerciseHistory(exerciseTemplateId: string) {

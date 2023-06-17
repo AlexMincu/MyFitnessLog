@@ -1,6 +1,6 @@
 import type { PageServerLoad } from '../$types';
 import { db } from '$lib/database';
-import { WorkoutType } from '@prisma/client';
+import { WorkoutType } from '$lib/customTypes';
 
 async function getUserId(email: string) {
 	const user = await db.user.findUnique({

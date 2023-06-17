@@ -8,7 +8,8 @@
 		workoutState,
 		trainingState,
 		SetType,
-		exerciseTemplatesDrawerState
+		exerciseTemplatesDrawerState,
+		WorkoutType
 	} from '$lib/customTypes';
 	import type { State, Workout, Exercise, Set } from '$lib/customTypes';
 	import {
@@ -16,7 +17,6 @@
 		deleteWorkoutRequest,
 		editWorkoutRequest
 	} from '$lib/services/workoutService';
-	import { WorkoutType } from '@prisma/client';
 	import ExerciseHistoryAccordion from './ExerciseHistoryAccordion.svelte';
 
 	// ******************* Variables *******************

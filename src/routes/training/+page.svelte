@@ -11,10 +11,10 @@
 		trainingState,
 		workoutState,
 		exerciseTemplateState,
-		workoutsHistoryDrawerState
+		workoutsHistoryDrawerState,
+		WorkoutType
 	} from '$lib/customTypes';
 	import type { State, Workout, Exercise } from '$lib/customTypes';
-	import { WorkoutType } from '@prisma/client';
 
 	// ******************* Variables *******************
 

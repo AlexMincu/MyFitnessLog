@@ -1,4 +1,7 @@
-import type { WorkoutType } from '@prisma/client';
+export enum WorkoutType {
+	TEMPLATE = 'TEMPLATE',
+	ENTRY = 'ENTRY'
+}
 
 export type Workout = {
 	id: string | null;
