@@ -63,7 +63,7 @@
 <Toast max={5} />
 
 <!-- ! App Shell -->
-<AppShell>
+<AppShell regionPage="hide-scrollbar">
 	<svelte:fragment slot="header">
 		<!-- ! App Bar Component -->
 		<AppBar

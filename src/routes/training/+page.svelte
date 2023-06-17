@@ -59,7 +59,7 @@
 <div class="w-full h-full relative">
 	<!-- ! Exercise Templates 'Drawer' -->
 	<div
-		class="transition-all bg-surface-200-700-token w-full h-full overflow-y-scroll overflow-x-hidden absolute left-0 top-0 {state.exerciseTemplatesDrawer ===
+		class="hide-scrollbar transition-all bg-surface-200-700-token w-full h-full overflow-y-scroll overflow-x-hidden absolute left-0 top-0 {state.exerciseTemplatesDrawer ===
 		exerciseTemplatesDrawerState.CLOSE
 			? '-translate-x-full'
 			: ''}"
@@ -69,7 +69,7 @@
 
 	<!-- ! Workouts History 'Drawer' -->
 	<div
-		class="transition-all bg-surface-200-700-token w-full h-full overflow-y-scroll overflow-x-hidden absolute left-0 top-0 {state.workoutsHistoryDrawer ===
+		class="hide-scrollbar transition-all bg-surface-200-700-token w-full h-full overflow-y-scroll overflow-x-hidden absolute left-0 top-0 {state.workoutsHistoryDrawer ===
 		workoutsHistoryDrawerState.CLOSE
 			? 'translate-x-full'
 			: ''}"
