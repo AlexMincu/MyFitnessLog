@@ -55,9 +55,8 @@
 			Try the app as guest! <button
 				formaction="?/guest"
 				on:click={() => {
-					loading = !loading;
+					loading = true;
 				}}
-				disabled={loading}
 				class="variant-ghost-secondary btn-sm ml-2">Guest Mode</button
 			>
 		</div>

@@ -6,8 +6,6 @@ import { db } from '$lib/database';
 
 import { loginSchema } from '$lib/validationSchemas';
 import { Role } from '@prisma/client';
-import { createWorkoutRequest } from '$lib/services/workoutService';
-import { WorkoutType, type Workout, SetType } from '$lib/customTypes';
 
 export const actions: Actions = {
 	login: async ({ cookies, request }) => {
@@ -101,7 +99,7 @@ export const actions: Actions = {
 		});
 
 		if (authenticatedUser) {
-			const workouts: Workout[] = [
+			const workouts = [
 				{
 					id: null,
 					title: 'Full Body Workout 1',
