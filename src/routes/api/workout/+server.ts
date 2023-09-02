@@ -20,7 +20,7 @@ async function createWorkout(email: string, workout: Workout) {
 			}
 		});
 
-		workout.exercises.forEach(async (exercise: Exercise) => {
+		for (const exercise of workout.exercises) {
 			if (exercise.exerciseTemplate.id) {
 				const exerciseTemplate = await db.exerciseTemplate.findUnique({
 					where: {
@@ -49,7 +49,7 @@ async function createWorkout(email: string, workout: Workout) {
 						}
 					});
 
-					exercise.sets.forEach(async (set: Set) => {
+					for (const set of exercise.sets) {
 						await db.set.create({
 							data: {
 								exerciseId: exerciseEntry.id,
@@ -59,10 +59,10 @@ async function createWorkout(email: string, workout: Workout) {
 								reps: Number(set.reps)
 							}
 						});
-					});
+					}
 				}
 			}
-		});
+		}
 
 		return { createdWorkout };
 	} catch (err) {

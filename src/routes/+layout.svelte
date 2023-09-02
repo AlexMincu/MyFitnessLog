@@ -110,7 +110,16 @@
 
 			<!-- Default fragment -->
 			<div class="hidden md:block">
-				<Navigation />
+				{#if $page.data.user}
+					<Navigation />
+				{:else}
+					<div>
+						Preview Application as Guest <a
+							href="/login"
+							class="variant-ghost-secondary btn-sm ml-2">Guest Mode</a
+						>
+					</div>
+				{/if}
 			</div>
 
 			<!-- Trail fragment -->
