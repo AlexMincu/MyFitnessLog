@@ -1,38 +1,34 @@
-# create-svelte
+# <img src="https://github.com/AlexMincu/MyFitnessLog/blob/main/static/favicon.png?raw=true" width="60px"> MyFitnessLog
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/master/packages/create-svelte).
+## Workout Tracking Web Application - [Live Preview](https://myfitnesslog.vercel.app/)
+#### About
+MyFitnessLog is a fitness tracking application designed to help users monitor their training routines, it empowers users to log their workouts, track progress, and stay motivated and consistent on their fitness journey.
 
-## Creating a project
+### Technologies
+- SvelteKit with Typescript
+- TailwindCSS, SkeletonUI
+- PostgreSQL, Prisma (hosted on Supabase)
 
-If you're seeing this, you've probably already done this step. Congrats!
+### Future
+- Improvements on the current workout tracker feature
+- Body measurements tracker
+- Habit tracker
+- Sharable Workouts
+- Graphs and Statistics
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+### Preview
 
-# create a new project in my-app
-npm create svelte@latest my-app
-```
+#### Ligth/Dark Mode
+<img src="https://github.com/AlexMincu/MyFitnessLog/assets/52635649/dc696bc1-6e8c-4922-b028-034e7e7a17bc" width="400px">
 
-## Developing
+#### Main view for training section
+<img src="https://github.com/AlexMincu/MyFitnessLog/assets/52635649/dfa2410a-a9b1-4f63-98c5-bb64d47b34f0" width="400px">
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+#### Exercise database
+<img src="https://github.com/AlexMincu/MyFitnessLog/assets/52635649/c420b7ce-10d5-4a2b-b808-118289aae756" width="400px">
 
-```bash
-npm run dev
+#### Workout tracking
+<img src="https://github.com/AlexMincu/MyFitnessLog/assets/52635649/2d90efca-7ccf-4d98-b70b-b171825b557a" width="400px">
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+<img src="https://github.com/AlexMincu/MyFitnessLog/assets/52635649/976911c0-13ce-4f96-a77f-fc0c70bbfa55" width="400px">
 
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
