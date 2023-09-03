@@ -16,7 +16,7 @@
 	} from '$lib/customTypes';
 	import type { State, Workout, Exercise } from '$lib/customTypes';
 
-	// ******************* Variables *******************
+	// <!-- ! Variables -->
 
 	let state: State = {
 		training: trainingState.VIEW_ALL,
@@ -34,7 +34,7 @@
 	let selectedExercise: Exercise;
 	let activeWorkout: Workout | null = null;
 
-	// ******************* Functions *******************
+	// <!-- ! Functions -->
 	function forceRefresh() {
 		currentWorkout = currentWorkout;
 		activeWorkout = activeWorkout;
