@@ -1,8 +1,35 @@
 import { error, json, type RequestHandler } from '@sveltejs/kit';
 
 import { db } from '$lib/database';
-import type { Workout, Exercise, Set } from '$lib/customTypes';
+import { type Workout, type Exercise, type Set, WorkoutType } from '$lib/customTypes';
 import { validateWorkout } from '$lib/services/workoutService';
+
+async function getWorkouts(userId: string, workoutsType: WorkoutType) {
+	const workouts = await db.workout.findMany({
+		where: {
+			AND: [{ userId }, { type: workoutsType }]
+		},
+		orderBy: {
+			createdAt: 'desc'
+		},
+		include: {
+			exercises: {
+				include: {
+					exerciseTemplate: true,
+					sets: {
+						orderBy: {
+							orderNumber: 'asc'
+						}
+					}
+				}
+			}
+		}
+	});
+
+	if (workouts) return workouts;
+
+	return null;
+}
 
 async function createWorkout(email: string, workout: Workout) {
 	try {
@@ -69,6 +96,26 @@ async function createWorkout(email: string, workout: Workout) {
 		return { error: err.message };
 	}
 }
+
+export const GET: RequestHandler = async ({ locals }) => {
+	const user = await db.user.findUnique({
+		where: {
+			email: locals.user.email
+		}
+	});
+
+	let workoutTemplates;
+	let workoutEntries;
+
+	if (user) {
+		workoutTemplates = await getWorkouts(user.id, WorkoutType.TEMPLATE);
+		workoutEntries = await getWorkouts(user.id, WorkoutType.ENTRY);
+	}
+
+	if (workoutTemplates === null || workoutEntries === null) throw error(500);
+
+	return json({ success: true, workoutTemplates, workoutEntries }, { status: 200 });
+};
 
 // Create Workout Handler
 export const POST: RequestHandler = async ({ request, locals }) => {

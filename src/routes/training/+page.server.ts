@@ -1,6 +1,5 @@
 import type { PageServerLoad } from '../$types';
 import { db } from '$lib/database';
-import { WorkoutType } from '$lib/customTypes';
 
 async function getUserId(email: string) {
 	const user = await db.user.findUnique({
@@ -10,33 +9,6 @@ async function getUserId(email: string) {
 	});
 
 	if (user) return user.id;
-
-	return null;
-}
-
-async function getWorkouts(userId: string, workoutsType: WorkoutType) {
-	const workouts = await db.workout.findMany({
-		where: {
-			AND: [{ userId }, { type: workoutsType }]
-		},
-		orderBy: {
-			createdAt: 'desc'
-		},
-		include: {
-			exercises: {
-				include: {
-					exerciseTemplate: true,
-					sets: {
-						orderBy: {
-							orderNumber: 'asc'
-						}
-					}
-				}
-			}
-		}
-	});
-
-	if (workouts) return workouts;
 
 	return null;
 }
@@ -290,7 +262,7 @@ export const load: PageServerLoad = async ({ locals, cookies, fetch }) => {
 			}
 		];
 
-		for (const workout of workouts) {
+		workouts.forEach(async (workout) => {
 			const response = await fetch('/api/workout', {
 				method: 'POST',
 				body: JSON.stringify({ workout }),
@@ -312,17 +284,18 @@ export const load: PageServerLoad = async ({ locals, cookies, fetch }) => {
 					responseJSON
 				);
 			}
-		}
+		});
 
 		cookies.set('newGuest', 'false');
 	}
 
 	if (userId) {
-		// * Workout Templates
-		const workoutTemplates = await getWorkouts(userId, WorkoutType.TEMPLATE);
+		// * Workout Templates & Entries
+		const response = await fetch('/api/workout');
+		const responseJSON = await response.json();
 
-		// * Workout Entries
-		const workoutEntries = await getWorkouts(userId, WorkoutType.ENTRY);
+		const workoutTemplates = responseJSON.workoutTemplates;
+		const workoutEntries = responseJSON.workoutEntries;
 
 		// * Exercise Templates
 		const exerciseTemplates = await getExerciseTemplates(userId);

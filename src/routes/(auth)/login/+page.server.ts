@@ -55,7 +55,7 @@ export const actions: Actions = {
 		throw redirect(302, '/training');
 	},
 
-	guest: async ({ cookies, fetch }) => {
+	guest: async ({ cookies }) => {
 		const range_min = 10000;
 		const range_max = 99999;
 		let random = '';
@@ -98,7 +98,9 @@ export const actions: Actions = {
 			maxAge: 60 * 60 * 24 * 30
 		});
 
-		cookies.set('newGuest', 'true');
+		cookies.set('newGuest', 'true', {
+			path: '/'
+		});
 
 		if (authenticatedUser) {
 			throw redirect(302, '/training');

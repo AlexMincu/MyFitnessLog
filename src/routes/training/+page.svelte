@@ -39,6 +39,12 @@
 		currentWorkout = currentWorkout;
 		activeWorkout = activeWorkout;
 	}
+
+	function Refresh() {
+		invalidateAll();
+	}
+
+	setInterval(Refresh, 5000);
 </script>
 
 <!-- ! Active Workout -->
