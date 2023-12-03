@@ -44,7 +44,7 @@
 		invalidateAll();
 	}
 
-	setInterval(Refresh, 5000);
+	setInterval(Refresh, 500);
 </script>
 
 <!-- ! Active Workout -->
